@@ -122,4 +122,4 @@ If you use this software, please cite the associated SoftwareX article and the a
 
 ## License
 
-Choose and include an open-source license before submission. MIT or BSD-3-Clause are simple permissive options. GPL-3.0 is suitable if derivative work should remain open-source.
+MIT licence is used, see LICENCE.md file.
