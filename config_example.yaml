@@ -1,9 +1,9 @@
 
-# config/config.yaml (пример)
-# Добавь в свой существующий config или адаптируй под свой проект.
+# Implementation note.
+# Implementation note.
 
 custom:
-  scene_path: "scene.yaml"
+  scene_path: "examples/basic_scene.yaml"
 
 batch_size:
   Interior: 4096

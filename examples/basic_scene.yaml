@@ -1,45 +1,45 @@
 materials:
-  vzduch:
+  air:
     absorption: 0.05
     R: 0.0
     T: 1.0
     scatter: 0.0
-  kov:
+  metal:
     absorption: 5.0
     R: 0.9
     T: 0.1
     scatter: 1.0
-  plast:
+  plastic:
     absorption: 0.35
     R: 0.1
     T: 0.9
     scatter: 0.18
-  sklo:
+  glass:
     absorption: 0.6
     R: 0.15
     T: 0.85
     scatter: 0.25
-  betón:
+  concrete:
     absorption: 2.5
     R: 0.6
     T: 0.4
     scatter: 0.55
-  voda:
+  water:
     absorption: 0.5
     R: 0.1
     T: 0.9
     scatter: 0.25
-scéna:
-  zdroj:
+scene:
+  source:
     x0: 0.65
     y0: 1.45
     amplitude: 2.0
     frequency_hz: 1000000000.0
     radius: 0.12
-  objekty:
+  objects:
     - x: 0.7
       y: 0.6
-      material: betón
+      material: concrete
       shape: circle
       r: 0.10
       width: 0.20
@@ -47,7 +47,7 @@ scéna:
       angle: 0.0
     - x: 1.2
       y: 1.3
-      material: kov
+      material: metal
       shape: rectangle
       r: 0.08
       width: 0.22
@@ -55,7 +55,7 @@ scéna:
       angle: 0.0
     - x: 1.8
       y: 0.9
-      material: sklo
+      material: glass
       shape: triangle
       r: 0.08
       width: 0.22

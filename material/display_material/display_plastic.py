@@ -3,7 +3,7 @@ import pyvista as pv
 from scipy.interpolate import griddata
 import pandas as pd
 
-filename = "/workspace/my_examples/example_antenna/outputs/plastic/constraints/wave_constraint.vtp"
+filename = "/workspace/my_examples/example_antenna/outputs/plasticic/constraints/wave_constraint.vtp"
 mesh = pv.read(filename)
 
 points = mesh.points
@@ -37,5 +37,5 @@ grid["difference"] = np.ravel(diff_grid, order="F")
 
 antenna = pv.Sphere(radius=0.04, center=(1, 1, 0))
 pv.MultiBlock([grid, antenna]).save(
-    "/workspace/my_examples/example_antenna/outputs/plastic/constraints/wave_field_structured_antenna.vtm"
+    "/workspace/my_examples/example_antenna/outputs/plasticic/constraints/wave_field_structured_antenna.vtm"
 )

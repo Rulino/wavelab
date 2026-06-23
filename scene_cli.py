@@ -7,54 +7,54 @@ import yaml
 WORLD = dict(xmin=0.0, xmax=3.0, ymin=0.0, ymax=2.0)
 
 MATERIAL_ALIASES = {
-    "air": "vzduch",
-    "asphalt": "asfalt",
-    "brick": "tehla",
-    "concrete": "betón",
-    "foam": "pena",
-    "glass": "sklo",
-    "ice": "ľad",
-    "metal": "kov",
-    "plastic": "plast",
-    "rubber": "guma",
-    "sand": "piesok",
-    "water": "voda",
-    "wood": "drevo",
+    "air": "air",
+    "asphalt": "asphalt",
+    "brick": "brick",
+    "concrete": "concrete",
+    "foam": "foam",
+    "glass": "glass",
+    "ice": "ice",
+    "metal": "metal",
+    "plasticic": "plastic",
+    "rubber": "rubber",
+    "sand": "sand",
+    "water": "water",
+    "wood": "wood",
 }
 
 SHAPE_ALIASES = {
-    "circle": "kruh",
-    "square": "štvorec",
-    "rectangle": "obdĺžnik",
-    "triangle": "trojuholník",
-    "stvorec": "štvorec",
-    "obdlznik": "obdĺžnik",
-    "trojuholnik": "trojuholník",
+    "circle": "circle",
+    "square": "square",
+    "rectangle": "rectangle",
+    "triangle": "triangle",
+    "stvorec": "square",
+    "obdlznik": "rectangle",
+    "trojuholnik": "triangle",
 }
 
 def canonical_material_name(name: str) -> str:
-    n = str(name or "vzduch").strip().lower()
+    n = str(name or "air").strip().lower()
     return MATERIAL_ALIASES.get(n, n)
 
 def canonical_shape_name(name: str) -> str:
-    n = str(name or "kruh").strip().lower()
+    n = str(name or "circle").strip().lower()
     n = SHAPE_ALIASES.get(n, n)
-    return n if n in {"kruh", "štvorec", "obdĺžnik", "trojuholník"} else "kruh"
+    return n if n in {"circle", "square", "rectangle", "triangle"} else "circle"
 
 DEFAULT_MATERIALS = {
-    "vzduch":      {"absorption": 0.03, "c": 3.0e8, "T": 1.00, "R": 0.00, "scatter": 0.00, "barrier": False},
-    "asfalt":  {"absorption": 0.06, "c": 2.2e8, "T": 0.58, "R": 0.50, "scatter": 0.40, "barrier": False},
-    "tehla":    {"absorption": 0.07, "c": 2.0e8, "T": 0.45, "R": 0.55, "scatter": 0.50, "barrier": False},
-    "betón": {"absorption": 0.08, "c": 2.0e8, "T": 0.18, "R": 0.60, "scatter": 0.55, "barrier": True},
-    "pena":     {"absorption": 0.05, "c": 1.3e8, "T": 0.78, "R": 0.10, "scatter": 0.08, "barrier": False},
-    "sklo":    {"absorption": 0.05, "c": 2.2e8, "T": 0.65, "R": 0.15, "scatter": 0.25, "barrier": False},
-    "ľad":      {"absorption": 0.02, "c": 3.1e8, "T": 0.75, "R": 0.08, "scatter": 0.12, "barrier": False},
-    "kov":    {"absorption": 0.10, "c": 2.5e8, "T": 0.03, "R": 0.90, "scatter": 1.00, "barrier": True},
-    "plast":  {"absorption": 0.05, "c": 2.4e8, "T": 0.82, "R": 0.10, "scatter": 0.18, "barrier": False},
-    "guma":   {"absorption": 0.09, "c": 1.6e8, "T": 0.55, "R": 0.25, "scatter": 0.20, "barrier": False},
-    "piesok":     {"absorption": 0.08, "c": 1.7e8, "T": 0.62, "R": 0.35, "scatter": 0.45, "barrier": False},
-    "voda":    {"absorption": 0.06, "c": 1.5e8, "T": 0.85, "R": 0.10, "scatter": 0.25, "barrier": False},
-    "drevo":     {"absorption": 0.06, "c": 2.0e8, "T": 0.70, "R": 0.30, "scatter": 0.35, "barrier": False},
+    "air":      {"absorption": 0.03, "c": 3.0e8, "T": 1.00, "R": 0.00, "scatter": 0.00, "barrier": False},
+    "asphalt":  {"absorption": 0.06, "c": 2.2e8, "T": 0.58, "R": 0.50, "scatter": 0.40, "barrier": False},
+    "brick":    {"absorption": 0.07, "c": 2.0e8, "T": 0.45, "R": 0.55, "scatter": 0.50, "barrier": False},
+    "concrete": {"absorption": 0.08, "c": 2.0e8, "T": 0.18, "R": 0.60, "scatter": 0.55, "barrier": True},
+    "foam":     {"absorption": 0.05, "c": 1.3e8, "T": 0.78, "R": 0.10, "scatter": 0.08, "barrier": False},
+    "glass":    {"absorption": 0.05, "c": 2.2e8, "T": 0.65, "R": 0.15, "scatter": 0.25, "barrier": False},
+    "ice":      {"absorption": 0.02, "c": 3.1e8, "T": 0.75, "R": 0.08, "scatter": 0.12, "barrier": False},
+    "metal":    {"absorption": 0.10, "c": 2.5e8, "T": 0.03, "R": 0.90, "scatter": 1.00, "barrier": True},
+    "plastic":  {"absorption": 0.05, "c": 2.4e8, "T": 0.82, "R": 0.10, "scatter": 0.18, "barrier": False},
+    "rubber":   {"absorption": 0.09, "c": 1.6e8, "T": 0.55, "R": 0.25, "scatter": 0.20, "barrier": False},
+    "sand":     {"absorption": 0.08, "c": 1.7e8, "T": 0.62, "R": 0.35, "scatter": 0.45, "barrier": False},
+    "water":    {"absorption": 0.06, "c": 1.5e8, "T": 0.85, "R": 0.10, "scatter": 0.25, "barrier": False},
+    "wood":     {"absorption": 0.06, "c": 2.0e8, "T": 0.70, "R": 0.30, "scatter": 0.35, "barrier": False},
 }
 
 def die(msg: str):
@@ -76,20 +76,20 @@ def load_scene(path: Path) -> dict:
         # init default scene
         return {
             "materials": DEFAULT_MATERIALS,
-            "scéna": {
-                "zdroj": {"x0": 0.8, "y0": 1.0, "frequency_hz": 1e9, "amplitude": 1.0},
-                "objekty": []
+            "scene": {
+                "source": {"x0": 0.8, "y0": 1.0, "frequency_hz": 1e9, "amplitude": 1.0},
+                "objects": []
             }
         }
     with open(path, "r", encoding="utf-8") as f:
         data = yaml.safe_load(f) or {}
 
-    scene = data.get("scéna", data.get("scene"))
+    scene = data.get("scene", data.get("scene"))
     if not isinstance(scene, dict):
-        die("scene file missing top-level key: scéna or scene")
+        die("scene file missing top-level key: scene or scene")
 
-    source = scene.get("zdroj", scene.get("source", {"x0": 0.8, "y0": 1.0, "frequency_hz": 1e9, "amplitude": 1.0}))
-    objects = scene.get("objekty", scene.get("objects", []))
+    source = scene.get("source", scene.get("source", {"x0": 0.8, "y0": 1.0, "frequency_hz": 1e9, "amplitude": 1.0}))
+    objects = scene.get("objects", scene.get("objects", []))
     if not isinstance(source, dict):
         source = {"x0": 0.8, "y0": 1.0, "frequency_hz": 1e9, "amplitude": 1.0}
     if not isinstance(objects, list):
@@ -100,8 +100,8 @@ def load_scene(path: Path) -> dict:
         if not isinstance(obj, dict):
             continue
         item = dict(obj)
-        item["material"] = canonical_material_name(item.get("material", "vzduch"))
-        item["shape"] = canonical_shape_name(item.get("shape", item.get("type", "kruh")))
+        item["material"] = canonical_material_name(item.get("material", "air"))
+        item["shape"] = canonical_shape_name(item.get("shape", item.get("type", "circle")))
         normalized_objects.append(item)
 
     materials = dict(DEFAULT_MATERIALS)
@@ -110,7 +110,7 @@ def load_scene(path: Path) -> dict:
         for name, props in user_materials.items():
             materials[canonical_material_name(name)] = dict(props or {}) if isinstance(props, dict) else {}
 
-    return {"materials": materials, "scéna": {"zdroj": dict(source), "objekty": normalized_objects}}
+    return {"materials": materials, "scene": {"source": dict(source), "objects": normalized_objects}}
 
 def save_scene(path: Path, data: dict):
     path.parent.mkdir(parents=True, exist_ok=True)
@@ -118,16 +118,16 @@ def save_scene(path: Path, data: dict):
         yaml.safe_dump(data, f, sort_keys=False, allow_unicode=True)
 
 def list_objects(data: dict):
-    objs = data["scéna"]["objekty"]
+    objs = data["scene"]["objects"]
     if not objs:
-        print("(no objekty)")
+        print("(no objects)")
         return
     for i, o in enumerate(objs):
         x = o.get("x", 0.0)
         y = o.get("y", 0.0)
         r = o.get("r", 0.08)
-        m = o.get("material", "vzduch")
-        shape = o.get("shape", "kruh")
+        m = o.get("material", "air")
+        shape = o.get("shape", "circle")
         width = o.get("width", 2 * r)
         height = o.get("height", 2 * r)
         angle = o.get("angle", 0.0)
@@ -173,13 +173,13 @@ def add_material(data: dict, name: str, c: float, absorption: float, T: float, R
 def delete_material(data: dict, name: str):
     name = canonical_material_name(name)
     mats = known_materials(data)
-    if name == "vzduch":
-        die("vzduch material cannot be deleted")
+    if name == "air":
+        die("air material cannot be deleted")
     if name not in mats:
         die(f"unknown material: {name}")
-    for o in data["scéna"].get("objekty", []):
+    for o in data["scene"].get("objects", []):
         if str(o.get("material", "")).strip().lower() == name:
-            die(f"material {name} is used by an objekt; change/delete that objekt first")
+            die(f"material {name} is used by an object; change/delete that object first")
     del mats[name]
 
 def add_object(data: dict, x: float, y: float, material: str, r: float, shape: str, width: float, height: float, angle: float):
@@ -191,23 +191,23 @@ def add_object(data: dict, x: float, y: float, material: str, r: float, shape: s
     y = in_range(y, WORLD["ymin"], WORLD["ymax"])
     r = abs(r)
     shape = canonical_shape_name(shape)
-    if shape not in {"kruh", "štvorec", "obdĺžnik", "trojuholník"}:
-        die("shape must be: kruh, štvorec, obdĺžnik, trojuholník")
+    if shape not in {"circle", "square", "rectangle", "triangle"}:
+        die("shape must be: circle, square, rectangle, triangle")
     width = abs(width) if width is not None else max(2.0 * r, 0.16)
     height = abs(height) if height is not None else max(2.0 * r, 0.16)
-    data["scéna"]["objekty"].append({
+    data["scene"]["objects"].append({
         "x": x, "y": y, "r": r, "width": width, "height": height,
         "angle": float(angle), "shape": shape, "material": material,
     })
 
 def delete_object(data: dict, idx: int):
-    objs = data["scéna"]["objekty"]
+    objs = data["scene"]["objects"]
     if idx < 0 or idx >= len(objs):
         die(f"bad index {idx}. Use: list")
     del objs[idx]
 
 def update_object(data: dict, idx: int, x, y, material, r, shape=None, width=None, height=None, angle=None):
-    objs = data["scéna"]["objekty"]
+    objs = data["scene"]["objects"]
     if idx < 0 or idx >= len(objs):
         die(f"bad index {idx}. Use: list")
     o = objs[idx]
@@ -219,8 +219,8 @@ def update_object(data: dict, idx: int, x, y, material, r, shape=None, width=Non
     if angle is not None: o["angle"] = float(angle)
     if shape is not None:
         shape = canonical_shape_name(shape)
-        if shape not in {"kruh", "štvorec", "obdĺžnik", "trojuholník"}:
-            die("shape must be: kruh, štvorec, obdĺžnik, trojuholník")
+        if shape not in {"circle", "square", "rectangle", "triangle"}:
+            die("shape must be: circle, square, rectangle, triangle")
         o["shape"] = shape
     if material is not None:
         material = canonical_material_name(material)
@@ -230,19 +230,19 @@ def update_object(data: dict, idx: int, x, y, material, r, shape=None, width=Non
         o["material"] = material
 
 def set_source(data: dict, x0, y0, freq, amp):
-    s = data["scéna"]["zdroj"]
+    s = data["scene"]["source"]
     if x0 is not None: s["x0"] = in_range(x0, WORLD["xmin"], WORLD["xmax"])
     if y0 is not None: s["y0"] = in_range(y0, WORLD["ymin"], WORLD["ymax"])
     if freq is not None: s["frequency_hz"] = float(freq)
     if amp is not None: s["amplitude"] = float(amp)
 
 def main():
-    ap = argparse.ArgumentParser(description="No-GUI scéna editor for scéna.yaml")
-    ap.add_argument("--scéna", "--scene", dest="scene_file", default="scéna.yaml", help="path to scene YAML file")
+    ap = argparse.ArgumentParser(description="No-GUI scene editor for scene.yaml")
+    ap.add_argument("--scene", dest="scene_file", default="scene.yaml", help="path to scene YAML file")
 
     sub = ap.add_subparsers(dest="cmd", required=True)
 
-    sub.add_parser("list", help="list objekty")
+    sub.add_parser("list", help="list objects")
     sub.add_parser("materials", help="list available materials")
 
     ma = sub.add_parser("material-add", help="add/update custom material")
@@ -257,31 +257,31 @@ def main():
     md = sub.add_parser("material-del", help="delete custom material")
     md.add_argument("name")
 
-    a = sub.add_parser("add", help="add objekt")
+    a = sub.add_parser("add", help="add object")
     a.add_argument("--x", required=True)
     a.add_argument("--y", required=True)
     a.add_argument("--material", required=True)
-    a.add_argument("--shape", default="kruh", choices=["kruh", "štvorec", "obdĺžnik", "trojuholník", "circle", "square", "rectangle", "triangle"])
-    a.add_argument("--r", default="0.08", help="kruh radius / fallback size")
-    a.add_argument("--width", default="0.16", help="obdĺžnik/trojuholník width")
-    a.add_argument("--height", default="0.16", help="obdĺžnik/trojuholník height")
+    a.add_argument("--shape", default="circle", choices=["circle", "square", "rectangle", "triangle", "circle", "square", "rectangle", "triangle"])
+    a.add_argument("--r", default="0.08", help="circle radius / fallback size")
+    a.add_argument("--width", default="0.16", help="rectangle/triangle width")
+    a.add_argument("--height", default="0.16", help="rectangle/triangle height")
     a.add_argument("--angle", default="0", help="rotation angle in degrees")
 
-    d = sub.add_parser("del", help="delete objekt by index")
+    d = sub.add_parser("del", help="delete object by index")
     d.add_argument("index", type=int)
 
-    u = sub.add_parser("update", help="update objekt by index")
+    u = sub.add_parser("update", help="update object by index")
     u.add_argument("index", type=int)
     u.add_argument("--x")
     u.add_argument("--y")
     u.add_argument("--material")
     u.add_argument("--r")
-    u.add_argument("--shape", choices=["kruh", "štvorec", "obdĺžnik", "trojuholník", "circle", "square", "rectangle", "triangle"])
+    u.add_argument("--shape", choices=["circle", "square", "rectangle", "triangle", "circle", "square", "rectangle", "triangle"])
     u.add_argument("--width")
     u.add_argument("--height")
     u.add_argument("--angle")
 
-    s = sub.add_parser("zdroj", help="set zdroj parameters")
+    s = sub.add_parser("source", help="set source parameters")
     s.add_argument("--x0")
     s.add_argument("--y0")
     s.add_argument("--freq")
@@ -360,7 +360,7 @@ def main():
         list_objects(data)
         return
 
-    if args.cmd == "zdroj":
+    if args.cmd == "source":
         set_source(
             data,
             x0=fnum(args.x0) if args.x0 is not None else None,
@@ -369,7 +369,7 @@ def main():
             amp=fnum(args.amp) if args.amp is not None else None,
         )
         save_scene(scene_path, data)
-        print("OK zdroj updated:", data["scéna"]["zdroj"])
+        print("OK source updated:", data["scene"]["source"])
         return
 
 if __name__ == "__main__":

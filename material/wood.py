@@ -18,30 +18,30 @@ def run(cfg: ModulusConfig) -> None:
     # -------------------------
     # Parametre
     # -------------------------
-    # Prostredie vzduchu: nízka absorpcia
+    # Air medium: low absorption
     absorption_air = 0.1
-    # Prostredie dreva: mierna absorpcia (nižšia ako u betónu)
+    # Prostredie wood: moderate absorption (lower than in concrete)
     absorption_wood = 1
     amplitude = 1.0
     lambda_val = 0.3
-    # Vertikálna hranica medzi prostredím – napr. x < 1.5: vzduch, x >= 1.5: drevo
+    # Vertical boundary between media – e.g. x < 1.5: air, x >= 1.5: wood
     boundary_x = 1.5
 
-    # Koeficienty odrazu a transmisie
-    # Pri prechode zo vzduchu do dreva je transmisia vyššia (T = 0.8) a odraz nižší (R = 0.2)
+    # Coefficients for reflection and transmission
+    # At the air-to-wood interface, transmission is higher (T = 0.8) a lower reflection (R = 0.2)
     R = 0.3
     T = 0.7
 
-    # Pozícia antény (ak sa anténa posunie, scattering sa prispôsobí)
+    # Antenna position (if the antenna moves, scattering adapts)
     x0, y0 = 0.75, 1
 
     # -------------------------
-    # Vzdušná oblasť (x < boundary_x)
+    # Air region (x < boundary_x)
     # -------------------------
     r_air = sqrt((x - x0)**2 + (y - y0)**2)
     u_air_direct = amplitude * sin(2*pi*r_air/lambda_val) * exp(-absorption_air*r_air)
 
-    # Odrazená vlna: zrkadlový obraz antény cez hranicu x = boundary_x
+    # Reflected wave: mirror image of the antenna across the boundary x = boundary_x
     x_ref = 2*boundary_x - x0
     y_ref = y0
     r_ref = sqrt((x - x_ref)**2 + (y - y_ref)**2)
@@ -50,33 +50,33 @@ def run(cfg: ModulusConfig) -> None:
     u_expr_air = u_air_direct + u_air_reflected
 
     # -------------------------
-    # Oblasť dreva (x >= boundary_x)
+    # Wood region (x >= boundary_x)
     # -------------------------
-    # Najprv vypočítame prienik lúča z antény (x0, y0) s vertikálnou hranicou x = boundary_x.
-    eps = 1e-12  # aby nedošlo k deleniu nulou
+    # First compute the ray intersection from the antenna (x0, y0) with the vertical boundary x = boundary_x.
+    eps = 1e-12  # to avoid division by zero
     slope = (y - y0) / ((x - x0) + eps)
     y_int = y0 + slope*(boundary_x - x0)
 
-    # r_in: vzdialenosť od antény k prieniku hranice
+    # r_in: distance from the antenna to the boundary intersection
     r_in = sqrt((boundary_x - x0)**2 + (y_int - y0)**2)
-    # r_out: vzdialenosť od prieniku k bodu (x, y)
+    # r_out: distance od intersection k bodu (x, y)
     r_out = sqrt((x - boundary_x)**2 + (y - y_int)**2)
     total_path = r_in + r_out
 
-    # Transmisný člen: vlna, ktorá prejde do dreva (s vyšším T a utlmením v drevenom prostredí)
+    # Transmission term: wave transmitted into wood (with higher T and attenuation in wood)
     u_transmitted = amplitude * T * sin(2*pi*total_path/lambda_val) * exp(-absorption_wood*total_path)
     
-    # Rozptylový člen: ďalší príspevok vznikajúci na rozhraní.
-    # Amplitúdu rozptylu spočítame z amplitude a absorption_wood:
+    # Scattering term: additional contribution generated at the interface.
+    # The scattering amplitude is computed z amplitude a absorption_wood:
     amplitude_scattered = amplitude * (absorption_wood / (absorption_wood + 1))
     u_scattered = amplitude_scattered * sin(2*pi*r_out/lambda_val) * exp(-absorption_wood*r_out)
 
-    # Drevená vlna je súčet transmisie a rozptylu
+    # The wood-region wave is sum of transmission and scattering
     u_expr_wood = u_transmitted + u_scattered
 
     # -------------------------
-    # Kombinácia cez Piecewise:
-    # Pre x < boundary_x použijeme vzdušnú oblasť, pre x >= boundary_x použijeme drevené prostredie.
+    # Combination cez Piecewise:
+    # For x < boundary_x use air region, for x >= boundary_x use wood medium.
     # -------------------------
     u_expr = Piecewise(
         (u_expr_air, x < boundary_x),

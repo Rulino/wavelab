@@ -16,7 +16,7 @@ DEFAULT_MATERIALS = {
     "concrete": {"absorption": 0.45, "R": 0.55, "T": 0.42, "scatter": 0.45, "color": "#d1d5db"},
     "metal":    {"absorption": 0.20, "R": 0.95, "T": 0.08, "scatter": 0.75, "color": "#fbbf24"},
     "glass":    {"absorption": 0.10, "R": 0.25, "T": 0.78, "scatter": 0.20, "color": "#38bdf8"},
-    "plastic":  {"absorption": 0.18, "R": 0.18, "T": 0.86, "scatter": 0.18, "color": "#60a5fa"},
+    "plasticic":  {"absorption": 0.18, "R": 0.18, "T": 0.86, "scatter": 0.18, "color": "#60a5fa"},
     "water":    {"absorption": 0.16, "R": 0.20, "T": 0.82, "scatter": 0.28, "color": "#3b82f6"},
 }
 
@@ -24,7 +24,7 @@ MATERIAL_LABEL_COLORS = {
     "concrete": "#d1d5db",
     "metal": "#fbbf24",
     "glass": "#38bdf8",
-    "plastic": "#60a5fa",
+    "plasticic": "#60a5fa",
     "water": "#3b82f6",
     "air": "#94a3b8",
 }
@@ -230,25 +230,25 @@ def compute_field(X, Y, data, t, frame_index):
     return field
 
 SHAPE_NAMES_SK = {
-    "circle": "kruh",
-    "square": "štvorec",
-    "rectangle": "obdĺžnik",
-    "triangle": "trojuholník",
+    "circle": "circle",
+    "square": "square",
+    "rectangle": "rectangle",
+    "triangle": "triangle",
 }
 
 MATERIAL_NAMES_SK = {
-    "air": "vzduch",
-    "glass": "sklo",
-    "concrete": "betón",
-    "metal": "kov",
-    "plastic": "plast",
-    "water": "voda",
-    "foam": "pena",
-    "rubber": "guma",
-    "wood": "drevo",
-    "sand": "piesok",
-    "brick": "tehla",
-    "asphalt": "asfalt",
+    "air": "air",
+    "glass": "glass",
+    "concrete": "concrete",
+    "metal": "metal",
+    "plasticic": "plastic",
+    "water": "water",
+    "foam": "foam",
+    "rubber": "rubber",
+    "wood": "wood",
+    "sand": "sand",
+    "brick": "brick",
+    "asphalt": "asphalt",
 }
 
 def draw_material_side_panel(draw, panel_box, objects, materials, font_title, font_med, font_small):
@@ -265,7 +265,7 @@ def draw_material_side_panel(draw, panel_box, objects, materials, font_title, fo
     title_y = y0 + 36
     draw.text(
         ((x0 + x1) // 2, title_y),
-        "Materiály a fyzikálne parametre",
+        "Materials and physical parameters",
         anchor="mm",
         fill=(255, 255, 255, 255),
         font=font_title,
@@ -307,10 +307,10 @@ def draw_material_side_panel(draw, panel_box, objects, materials, font_title, fo
 
     desc_y = sep_y + 36
     info_lines = [
-        ("R", "odrazivosť (reflection)"),
-        ("T", "priepustnosť (transmission)"),
-        ("α", "absorpcia (útlm v materiáli)"),
-        ("S", "rozptyl (scattering)"),
+        ("R", "reflectivity (reflection)"),
+        ("T", "transmission (transmission)"),
+        ("α", "absorption (attenuation v materiali)"),
+        ("S", "scattering (scattering)"),
     ]
     for j, (sym, meaning) in enumerate(info_lines):
         yy = desc_y + j * 34
@@ -327,7 +327,7 @@ def draw_material_side_panel(draw, panel_box, objects, materials, font_title, fo
     )
     draw.text(
         ((x0 + x1) // 2, bar_box_y + 32),
-        "Intenzita vlnenia (normalizovaná)",
+        "Intenzita wave (normalized)",
         anchor="mm",
         fill=(255, 255, 255, 255),
         font=font_med,

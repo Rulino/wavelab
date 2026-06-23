@@ -93,11 +93,11 @@ The GUI allows the user to define a scene, add or move material objects, run the
 
 ## Command-line scene editor
 
-The command-line editor currently uses the Slovak scene schema used by the solver, for example keys such as `scéna`, `zdroj`, and `objekty`.
+The command-line editor currently uses the Slovak scene schema used by the solver, for example keys such as `scene`, `source`, and `objects`.
 
 ```bash
-python scene_cli.py --scéna examples/basic_scene.yaml list
-python scene_cli.py --scéna examples/basic_scene.yaml materials
+python scene_cli.py --scene examples/basic_scene.yaml list
+python scene_cli.py --scene examples/basic_scene.yaml materials
 ```
 
 ## Minimal test

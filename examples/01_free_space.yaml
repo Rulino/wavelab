@@ -1,0 +1,14 @@
+scene:
+  source:
+    x0: 0.35
+    y0: 1.0
+    amplitude: 1.5
+    frequency_hz: 1000000000.0
+    radius: 0.08
+  objects: []
+materials:
+  air:
+    absorption: 0.03
+    R: 0.0
+    T: 1.0
+    scatter: 0.0

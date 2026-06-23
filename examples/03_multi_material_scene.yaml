@@ -1,0 +1,42 @@
+scene:
+  source:
+    x0: 0.45
+    y0: 1.45
+    amplitude: 2.0
+    frequency_hz: 1200000000.0
+    radius: 0.12
+  objects:
+    - x: 0.80
+      y: 0.65
+      material: concrete
+      shape: circle
+      r: 0.14
+      width: 0.28
+      height: 0.28
+    - x: 1.25
+      y: 1.30
+      material: metal
+      shape: rectangle
+      width: 0.28
+      height: 0.18
+      angle: 25.0
+    - x: 1.70
+      y: 0.85
+      material: glass
+      shape: triangle
+      width: 0.30
+      height: 0.26
+      angle: -10.0
+    - x: 2.10
+      y: 1.35
+      material: wood
+      shape: circle
+      r: 0.10
+      width: 0.20
+      height: 0.20
+materials:
+  air: {absorption: 0.03, R: 0.0, T: 1.0, scatter: 0.0}
+  concrete: {absorption: 2.5, R: 0.6, T: 0.4, scatter: 0.55}
+  metal: {absorption: 5.0, R: 0.9, T: 0.1, scatter: 1.0}
+  glass: {absorption: 0.6, R: 0.15, T: 0.85, scatter: 0.25}
+  wood: {absorption: 0.7, R: 0.2, T: 0.70, scatter: 0.25}

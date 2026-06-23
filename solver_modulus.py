@@ -4,8 +4,8 @@ from pathlib import Path
 
 def find_solver_script() -> Path:
     """
-    Ищем существующий solver в проекте.
-    Приоритет: metal.py -> wood.py -> water.py -> time.py
+    Run the solver first to create a video output.
+    Priority: solver_simple_torch.py, then older material-specific scripts.
     """
     candidates = ["solver_simple_torch.py", "metal.py", "wood.py", "water.py", "time.py"]
     for name in candidates:
@@ -13,14 +13,14 @@ def find_solver_script() -> Path:
         if p.exists():
             return p
     raise FileNotFoundError(
-        "Не найден solver. Ожидались файлы: solver_simple_torch.py / metal.py / wood.py / water.py / time.py "
-        "в папке example_antenna."
+        "No solver found. Expected one of: solver_simple_torch.py / metal.py / wood.py / water.py / time.py "
+        "in the project directory."
     )
 
 def main() -> int:
     solver = find_solver_script()
 
-    # Передаём ВСЕ аргументы как есть (например custom.scene_path=scene.yaml)
+    # Implementation note.
     cmd = [sys.executable, str(solver), *sys.argv[1:]]
 
     print(f"[solver_modulus] Using solver: {solver.name}", flush=True)

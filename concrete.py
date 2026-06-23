@@ -22,31 +22,31 @@ def run(cfg) -> None:
     # -------------------------
     # Parametre
     # -------------------------
-    # Prvé prostredie: vzduch (nízka absorpcia)
+    # First medium: air (low absorption)
     absorption_air = 0.1
-    # Druhé prostredie: concrete (absorpcia podľa materiálu)
+    # Second medium: concrete (absorption according to material)
     absorption_mat = 1.5
 
     amplitude = 1.0
     lambda_val = 0.3
 
-    # Vertikálna hranica medzi prostredím – x < boundary_x: vzduch, x >= boundary_x: concrete
+    # Vertical boundary between media – x < boundary_x: air, x >= boundary_x: concrete
     boundary_x = 1.5
 
-    # Koeficienty pre odraz a transmisiu na rozhraní
+    # Coefficients for reflection and transmission at the interface
     R = 0.6   # odraz
     T = 0.4   # transmisia
 
-    # Pozícia antény
+    # Antenna position
     x0, y0 = 1, 1
 
     # -------------------------
-    # Vzdušná oblasť (x < boundary_x)
+    # Air region (x < boundary_x)
     # -------------------------
     r_air = sqrt((x - x0)**2 + (y - y0)**2)
     u_air_direct = amplitude * sin(2*pi*r_air/lambda_val) * exp(-absorption_air*r_air)
 
-    # Odrazená vlna: zrkadlový obraz antény cez hranicu x = boundary_x
+    # Reflected wave: mirror image of the antenna across the boundary x = boundary_x
     x_ref = 2*boundary_x - x0
     y_ref = y0
     r_ref = sqrt((x - x_ref)**2 + (y - y_ref)**2)
@@ -55,29 +55,29 @@ def run(cfg) -> None:
     u_expr_air = u_air_direct + u_air_reflected
 
     # -------------------------
-    # Oblasť concrete (x >= boundary_x)
+    # Concrete region (x >= boundary_x)
     # -------------------------
-    eps = 1e-12  # na zabránenie delenia nulou
+    eps = 1e-12  # to avoid division by zero
     slope = (y - y0) / ((x - x0) + eps)
     y_int = y0 + slope*(boundary_x - x0)
 
-    # r_in: vzdialenosť od antény k prieniku hranice
+    # r_in: distance from the antenna to the boundary intersection
     r_in = sqrt((boundary_x - x0)**2 + (y_int - y0)**2)
-    # r_out: vzdialenosť od prieniku k bodu (x,y)
+    # r_out: distance od intersection k bodu (x,y)
     r_out = sqrt((x - boundary_x)**2 + (y - y_int)**2)
     total_path = r_in + r_out
 
-    # Transmisný člen: vlna, ktorá prejde hranicou (s tlmením v materiáli)
+    # Transmission term: wave transmitted through the boundary (with attenuation in the material)
     u_transmitted = amplitude * T * sin(2*pi*total_path/lambda_val) * exp(-absorption_mat*total_path)
 
-    # Scattering (rozptyl) – amplitúda rozptylu závisí od absorpcie materiálu
+    # Scattering (scattering) – scattering amplitude depends on material absorption
     amplitude_scattered = amplitude * (absorption_mat / (absorption_mat + 1))
     u_scattered = amplitude_scattered * sin(2*pi*r_out/lambda_val) * exp(-absorption_mat*r_out)
 
     u_expr_mat = u_transmitted + u_scattered
 
     # -------------------------
-    # Kombinácia cez Piecewise
+    # Combination cez Piecewise
     # -------------------------
     u_expr = Piecewise(
         (u_expr_air, x < boundary_x),

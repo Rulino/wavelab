@@ -5,41 +5,41 @@ import pandas as pd
 
 
 # --------------------------------------------------------
-# 1) Čítanie existujúceho VTP súboru
+# 1) Read an existing VTP file
 # --------------------------------------------------------
-filename = "/workspace/my_examples/example_antenna/outputs/wood/constraints/wave_constraint.vtp"  # uprav cestu, ak je potrebné
+filename = "/workspace/my_examples/example_antenna/outputs/wood/constraints/wave_constraint.vtp"  # adjust the path if needed
 mesh = pv.read(filename)
 
-# Extrahovanie bodových súradníc (x, y, z)
+# Extract point coordinates (x, y, z)
 points = mesh.points  # tvar: (N, 3)
 x_data = points[:, 0]
 y_data = points[:, 1]
 
-# Zoznam dostupných polí
+# List available fields
 print("Available arrays:", mesh.array_names)
 true_u_data = mesh["true_u"]
 pred_u_data = mesh["pred_u"]
 
 # --------------------------------------------------------
-# 2) Interpolácia do pravidelnej 2D mriežky (x vodorovne, y zvislo)
+# 2) Interpolate to a regular 2D grid (x horizontal, y vertical)
 # --------------------------------------------------------
 x_min, x_max = x_data.min(), x_data.max()
 y_min, y_max = y_data.min(), y_data.max()
 
-# Zvýšenie rozlíšenia pre ostrejší výstup
-nx, ny = 500, 500  # vyššie rozlíšenie
+# Increase resolution for sharper output
+nx, ny = 500, 500  # higher resolution
 grid_x = np.linspace(x_min, x_max, nx)  # os x
 grid_y = np.linspace(y_min, y_max, ny)  # os y
 
-# Použitie 'ij' indexovania, aby prvá dimenzia bola x a druhá y
+# Use 'ij' indexing, so the first dimension is x and the second is y
 X, Y = np.meshgrid(grid_x, grid_y, indexing="ij")
 
 true_u_grid = griddata((x_data, y_data), true_u_data, (X, Y), method="cubic")
 pred_u_grid = griddata((x_data, y_data), pred_u_data, (X, Y), method="cubic")
 
-# Vypočítanie rozdielového poľa
+# Compute the difference field
 diff_grid = true_u_grid - pred_u_grid
-# Alebo ak chcete absolútny rozdiel:
+# Alternatively, use an absolute difference:
 # diff_grid = np.abs(true_u_grid - pred_u_grid)
 mask = ~np.isnan(true_u_grid) & ~np.isnan(pred_u_grid)
 error = true_u_grid[mask] - pred_u_grid[mask]
@@ -62,29 +62,29 @@ metrics = {
 df = pd.DataFrame(metrics)
 print(df)
 # --------------------------------------------------------
-# 3) Vytvorenie štruktúrovanej mriežky pomocou ImageData a pripojenie dát
+# 3) Create a structured grid pomocou ImageData a attach data
 # --------------------------------------------------------
 grid = pv.ImageData()
-grid.origin = (x_min, y_min, 0.0)  # ľavý dolný roh
+grid.origin = (x_min, y_min, 0.0)  # lower-left corner
 grid.spacing = ((x_max - x_min) / (nx - 1),
                 (y_max - y_min) / (ny - 1),
                 1.0)
 grid.dimensions = (nx, ny, 1)
 
-# "Rozbalenie" 2D polí v stĺpcovom poradí ("F") tak, aby zodpovedali pamäťovému usporiadaniu vo VTK
+# "Flattening" 2D fields in column-major order ("F") to match VTK memory layout
 grid["true_u"] = np.ravel(true_u_grid, order="F")
 grid["pred_u"] = np.ravel(pred_u_grid, order="F")
 grid["difference"] = np.ravel(diff_grid, order="F")
 
 # --------------------------------------------------------
-# 4) Pridanie bodu (guľa) reprezentujúcej polohu antény
+# 4) Add a point (sphere) representing the antenna position
 # --------------------------------------------------------
-# Nastavte polohu antény – napr. (1, 1, 0)
+# Set the antenna position – e.g. (1, 1, 0)
 antenna_pos = (0.75, 1, 0)
 antenna = pv.Sphere(radius=0.04, center=antenna_pos)
 
 # --------------------------------------------------------
-# 5) Kombinácia gridu a antény do MultiBlock datasetu a uloženie do súboru
+# 5) Combine the grid and antenna do MultiBlock datasetu a save to file
 # --------------------------------------------------------
 multiblock_antenna = pv.MultiBlock([grid, antenna])
 output_filename1 = "/workspace/my_examples/example_antenna/outputs/wood/constraints/wave_field_structured_antenna.vtm"

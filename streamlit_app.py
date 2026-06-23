@@ -5,20 +5,20 @@ from pathlib import Path
 st.set_page_config(page_title="EM PINN Scene Builder", layout="centered")
 
 st.title("EM Wave Simulation (PINN)")
-st.write("Настройка сцены: частота и объекты")
+st.write("")
 
 # --------------------
 # Global parameters
 # --------------------
 frequency_ghz = st.number_input(
-    "Частота (GHz)",
+    "GHz)",
     min_value=0.1,
     max_value=100.0,
     value=1.0,
     step=0.1
 )
 
-num_objects = st.slider("Количество объектов", 0, 5, 1)
+num_objects = st.slider("Number of objects", 0, 5, 1)
 
 st.divider()
 
@@ -26,7 +26,7 @@ objects = []
 materials = ["metal", "wood", "water"]
 
 for i in range(num_objects):
-    st.subheader(f"Объект {i+1}")
+    st.subheader(f"Object {i+1}")
     col1, col2 = st.columns(2)
 
     with col1:
@@ -36,7 +36,7 @@ for i in range(num_objects):
         y2 = st.number_input(f"y2_{i}", value=1.0)
 
     with col2:
-        material = st.selectbox(f"Материал_{i}", materials)
+        material = st.selectbox(f"Material_{i}", materials)
 
     objects.append({
         "x1": x1, "x2": x2,
@@ -69,4 +69,4 @@ if st.button("Save scene.yaml"):
     with open(path, "w") as f:
         yaml.dump(scene, f)
 
-    st.success("scene.yaml сохранён успешно!")
+    st.success("scene.yaml saved successfully!")

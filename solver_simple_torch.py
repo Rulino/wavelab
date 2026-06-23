@@ -7,9 +7,9 @@ from datetime import datetime
 import math
 from collections import deque
 
-# -------- Dependency checks / Проверка зависимостей --------
+# -------- Dependency checks / Dependency checks --------
 # If a package is missing, show a clear install command instead of a long traceback.
-# Если пакета нет, показываем понятную команду установки вместо длинной ошибки.
+# Implementation note.
 try:
     import numpy as np
 except ModuleNotFoundError as e:
@@ -52,61 +52,61 @@ except ModuleNotFoundError as e:
 
 
 # Hranice sveta used for mesh generation and coordinate mapping
-# Границы мира для генерации сетки и преобразования координат
+# Implementation note.
 WORLD = dict(xmin=0.0, xmax=3.0, ymin=0.0, ymax=2.0)
 
-# Default radius for point-objekty (treated as disks in the solver)
-# Радиус по умолчанию для точек-объектов (в солвере считаются дисками)
+# Default radius for point-objects (treated as disks in the solver)
+# Implementation note.
 DEFAULT_POINT_RADIUS = 0.08
 
-# Default wave speed (c) per material (if not provided in scéna.yaml)
-# Скорость волны (c) по умолчанию для материалов (если не задано в scéna.yaml)
+# Default wave speed (c) per material (if not provided in scene.yaml)
+# Implementation note.
 DEFAULT_C_MAP = {
-    "vzduch": 3.0e8,
-    "asfalt": 2.2e8,
-    "tehla": 2.0e8,
-    "betón": 2.0e8,
-    "pena": 1.3e8,
-    "sklo": 2.2e8,
-    "ľad": 3.1e8,
-    "kov": 2.5e8,
-    "plast": 2.4e8,
-    "guma": 1.6e8,
-    "piesok": 1.7e8,
-    "voda": 1.5e8,
-    "drevo": 2.0e8,
+    "air": 3.0e8,
+    "asphalt": 2.2e8,
+    "brick": 2.0e8,
+    "concrete": 2.0e8,
+    "foam": 1.3e8,
+    "glass": 2.2e8,
+    "ice": 3.1e8,
+    "metal": 2.5e8,
+    "plastic": 2.4e8,
+    "rubber": 1.6e8,
+    "sand": 1.7e8,
+    "water": 1.5e8,
+    "wood": 2.0e8,
 }
 
 # Public examples and older GUI exports may use either English or Slovak names.
 # Internally the solver keeps the original Slovak keys for backward compatibility.
 MATERIAL_ALIASES = {
-    "air": "vzduch",
-    "asphalt": "asfalt",
-    "brick": "tehla",
-    "concrete": "betón",
-    "foam": "pena",
-    "glass": "sklo",
-    "ice": "ľad",
-    "metal": "kov",
-    "plastic": "plast",
-    "rubber": "guma",
-    "sand": "piesok",
-    "water": "voda",
-    "wood": "drevo",
+    "air": "air",
+    "asphalt": "asphalt",
+    "brick": "brick",
+    "concrete": "concrete",
+    "foam": "foam",
+    "glass": "glass",
+    "ice": "ice",
+    "metal": "metal",
+    "plasticic": "plastic",
+    "rubber": "rubber",
+    "sand": "sand",
+    "water": "water",
+    "wood": "wood",
 }
 
 SHAPE_ALIASES = {
-    "kruh": "circle",
-    "štvorec": "square",
+    "circle": "circle",
+    "square": "square",
     "stvorec": "square",
-    "obdĺžnik": "rectangle",
+    "rectangle": "rectangle",
     "obdlznik": "rectangle",
-    "trojuholník": "triangle",
+    "triangle": "triangle",
     "trojuholnik": "triangle",
 }
 
 def canonical_material_name(name: str) -> str:
-    n = str(name or "vzduch").strip().lower()
+    n = str(name or "air").strip().lower()
     return MATERIAL_ALIASES.get(n, n)
 
 def canonical_shape_name(name: str) -> str:
@@ -115,25 +115,25 @@ def canonical_shape_name(name: str) -> str:
     return n if n in {"circle", "square", "rectangle", "triangle"} else "circle"
 
 # Symbols used for drawing materials on plots (optional)
-# Символы для отображения материалов на графиках (опционально)
+# Implementation note.
 MAT_SYMBOLS = {
-    "kov": "■",
-    "betón": "▲",
-    "tehla": "◆",
-    "sklo": "◇",
-    "drevo": "●",
-    "voda": "≈",
-    "plast": "□",
-    "guma": "◉",
-    "piesok": "⋯",
-    "pena": "✚",
-    "ľad": "✳",
-    "asfalt": "▬",
-    "vzduch": "·",
+    "metal": "■",
+    "concrete": "▲",
+    "brick": "◆",
+    "glass": "◇",
+    "wood": "●",
+    "water": "≈",
+    "plastic": "□",
+    "rubber": "◉",
+    "sand": "⋯",
+    "foam": "✚",
+    "ice": "✳",
+    "asphalt": "▬",
+    "air": "·",
 }
 
 # Visualization style defaults
-# Настройки визуализации по умолчанию
+# Implementation note.
 PASTEL_CMAP = "cividis"
 PASTEL_ALPHA = 0.93
 PASTEL_VMAX_SCALE = 0.55
@@ -141,12 +141,12 @@ PASTEL_VMAX_SCALE = 0.55
 
 # ----------------------------
 # Small helpers
-# Вспомогательные функции
+# Implementation note.
 # ----------------------------
 def _as_float(v, default: float = 0.0) -> float:
     """
     Convert value to float with fallback.
-    Преобразовать значение в float с запасным значением.
+    Commas are accepted as decimal separators.
     """
     try:
         return float(v)
@@ -158,21 +158,21 @@ def canonicalize_scene_data(data: dict) -> dict:
     """Normalize supported scene YAML variants to the internal schema.
 
     Supported public schema: scene/source/objects with English material and shape
-    names. Internal legacy schema: scéna/zdroj/objekty with Slovak material names.
-    The returned dictionary always contains scéna.zdroj and scéna.objekty.
+    names. Internal legacy schema: scene/source/objects with Slovak material names.
+    The returned dictionary always contains scene.source and scene.objects.
     """
     if not isinstance(data, dict):
         raise ValueError("scene YAML must contain a mapping at the top level")
 
-    internal_scene = data.get("scéna")
+    internal_scene = data.get("scene")
     public_scene = data.get("scene")
     if internal_scene is None and public_scene is not None:
         internal_scene = public_scene
     if not isinstance(internal_scene, dict):
-        raise ValueError("scene YAML must contain either top-level key 'scéna' or 'scene'")
+        raise ValueError("scene YAML must contain either top-level key 'scene' or 'scene'")
 
-    source = internal_scene.get("zdroj", internal_scene.get("source", {}))
-    objects = internal_scene.get("objekty", internal_scene.get("objects", []))
+    source = internal_scene.get("source", internal_scene.get("source", {}))
+    objects = internal_scene.get("objects", internal_scene.get("objects", []))
     if not isinstance(source, dict):
         source = {}
     if not isinstance(objects, list):
@@ -183,7 +183,7 @@ def canonicalize_scene_data(data: dict) -> dict:
         if not isinstance(obj, dict):
             continue
         item = dict(obj)
-        item["material"] = canonical_material_name(item.get("material", "vzduch"))
+        item["material"] = canonical_material_name(item.get("material", "air"))
         item["shape"] = canonical_shape_name(item.get("shape", item.get("type", "circle")))
         normalized_objects.append(item)
 
@@ -196,13 +196,13 @@ def canonicalize_scene_data(data: dict) -> dict:
 
     out = dict(data)
     out["materials"] = normalized_materials
-    out["scéna"] = {"zdroj": dict(source), "objekty": normalized_objects}
+    out["scene"] = {"source": dict(source), "objects": normalized_objects}
     return out
 
 def load_scene(scene_path: str) -> dict:
     """Load and validate a scene file.
 
-    Both the legacy Slovak schema (scéna/zdroj/objekty) and the publication-facing
+    Both the legacy Slovak schema (scene/source/objects) and the publication-facing
     English schema (scene/source/objects) are accepted.
     """
     with open(scene_path, "r", encoding="utf-8") as f:
@@ -213,26 +213,26 @@ def load_scene(scene_path: str) -> dict:
 def get_material_props(materials: dict, name: str, air_abs: float):
     """
     Get material wave speed c and absorption alpha.
-    Получить скорость волны c и поглощение alpha для материала.
+    Return wave speed c and attenuation coefficient alpha.
 
-    If material is not found, uses defaults (vzduch as fallback).
-    Если материал не найден — берутся значения по умолчанию (vzduch как запасной).
+    If material is not found, uses defaults (air as fallback).
+    Air is used as a fallback medium.
     """
-    n = (name or "vzduch").strip().lower()
+    n = (name or "air").strip().lower()
     d = materials.get(n, {}) if isinstance(materials, dict) else {}
-    c = _as_float(d.get("c", DEFAULT_C_MAP.get(n, DEFAULT_C_MAP["vzduch"])), DEFAULT_C_MAP.get(n, DEFAULT_C_MAP["vzduch"]))
+    c = _as_float(d.get("c", DEFAULT_C_MAP.get(n, DEFAULT_C_MAP["air"])), DEFAULT_C_MAP.get(n, DEFAULT_C_MAP["air"]))
     alpha = _as_float(d.get("absorption", air_abs), air_abs)
     return float(c), float(alpha)
 
 
 def normalize_materials(materials: dict) -> dict:
     """
-    Normalize user-defined material dictionary from scéna.yaml.
-    Нормализовать пользовательские материалы из scéna.yaml.
+    Normalize user-defined material dictionary from scene.yaml.
+    
 
     Any material name is allowed. Supported fields:
       c, absorption, T/transmission, R/reflection, scatter, barrier, color, symbol
-    Можно добавлять любые материалы. Поддерживаемые поля:
+    
       c, absorption, T/transmission, R/reflection, scatter, barrier, color, symbol
     """
     out = {}
@@ -244,21 +244,21 @@ def normalize_materials(materials: dict) -> dict:
             props = raw_props if isinstance(raw_props, dict) else {}
             out[name] = dict(props)
 
-    # Always keep vzduch available as fallback.
-    # Воздух всегда нужен как запасной материал.
-    out.setdefault("vzduch", {})
-    out["vzduch"].setdefault("c", DEFAULT_C_MAP["vzduch"])
-    out["vzduch"].setdefault("absorption", 0.03)
-    out["vzduch"].setdefault("T", 1.0)
-    out["vzduch"].setdefault("R", 0.0)
-    out["vzduch"].setdefault("scatter", 0.0)
+    # Always keep air available as fallback.
+    # Implementation note.
+    out.setdefault("air", {})
+    out["air"].setdefault("c", DEFAULT_C_MAP["air"])
+    out["air"].setdefault("absorption", 0.03)
+    out["air"].setdefault("T", 1.0)
+    out["air"].setdefault("R", 0.0)
+    out["air"].setdefault("scatter", 0.0)
 
     return out
 
 
 def material_transmission(materials: dict, name: str, default: float = 1.0) -> float:
     """Return transmission coefficient for built-in or custom material."""
-    n = (name or "vzduch").strip().lower()
+    n = (name or "air").strip().lower()
     props = materials.get(n, {}) if isinstance(materials, dict) else {}
     if isinstance(props, dict):
         value = props.get("transmission", props.get("T", default))
@@ -269,7 +269,7 @@ def material_transmission(materials: dict, name: str, default: float = 1.0) -> f
 
 def build_transmission_map(materials: dict, cli_trans: dict) -> dict:
     """
-    Build transmission map. scéna.yaml values override CLI defaults,
+    Build transmission map. scene.yaml values override CLI defaults,
     so custom materials work without changing Python code.
     """
     out = dict(cli_trans)
@@ -281,7 +281,7 @@ def build_transmission_map(materials: dict, cli_trans: dict) -> dict:
 
 def infer_barrier_set(materials: dict, cli_barriers) -> set:
     """
-    Barrier materials are taken from --barrier_materials plus scéna.yaml fields
+    Barrier materials are taken from --barrier_materials plus scene.yaml fields
     barrier: true. This allows custom walls like lead, stone, ceramic, etc.
     """
     barriers = {canonical_material_name(m) for m in (cli_barriers or [])}
@@ -292,17 +292,17 @@ def infer_barrier_set(materials: dict, cli_barriers) -> set:
     return barriers
 
 
-def build_disks(objekty, barrier_set):
+def build_disks(objects, barrier_set):
     """
-    Convert scéna objekty into internal shape representation.
-    Поддерживаются формы:
-      kruh:    x, y, r
-      obdĺžnik: x, y, width, height, angle
-      trojuholník:  x, y, width, height, angle
-    Старое поле r/radius осталось совместимым.
+    Convert scene objects into internal shape representation.
+    
+      circle:    x, y, r
+      rectangle: x, y, width, height, angle
+      triangle:  x, y, width, height, angle
+    The legacy r/radius field remains supported.
     """
     shapes = []
-    for obj in objekty:
+    for obj in objects:
         if not isinstance(obj, dict):
             continue
         cx = _as_float(obj.get("x", 0.0), 0.0)
@@ -314,7 +314,7 @@ def build_disks(objekty, barrier_set):
         shape = canonical_shape_name(obj.get("shape", obj.get("type", "circle")))
         if shape == "square":
             height = width
-        mat = canonical_material_name(obj.get("material", "vzduch"))
+        mat = canonical_material_name(obj.get("material", "air"))
         shapes.append({
             "x": float(cx), "y": float(cy), "r": max(1e-4, float(r)),
             "width": max(1e-4, float(width)), "height": max(1e-4, float(height)),
@@ -338,7 +338,7 @@ def _rotate_to_local(x, y, cx, cy, angle_deg):
 def shape_soft_membership(x, y, obj, eps):
     """
     Smooth inside-mask for one shape. Returns values ~1 inside, ~0 outside.
-    Работает и для numpy-массивов, и для скаляров.
+    numpy-
     """
     cx, cy = obj["x"], obj["y"]
     shape = obj.get("shape", "circle")
@@ -356,7 +356,7 @@ def shape_soft_membership(x, y, obj, eps):
         lx, ly = _rotate_to_local(x, y, cx, cy, obj.get("angle", 0.0))
         w = float(obj.get("width", 0.2))
         h = float(obj.get("height", 0.2))
-        # Upright isosceles trojuholník vertices in local coordinates.
+        # Upright isosceles triangle vertices in local coordinates.
         x1, y1 = 0.0, h / 2.0
         x2, y2 = -w / 2.0, -h / 2.0
         x3, y3 = w / 2.0, -h / 2.0
@@ -368,7 +368,7 @@ def shape_soft_membership(x, y, obj, eps):
         inside = ((e1 >= 0) & (e2 >= 0) & (e3 >= 0)) | ((e1 <= 0) & (e2 <= 0) & (e3 <= 0))
         # hard mask with tiny soft border via gaussian later; enough for this solver
         return inside.astype(np.float32)
-    # kruh
+    # circle
     dist = np.sqrt((x - cx) ** 2 + (y - cy) ** 2 + 1e-12).astype(np.float32)
     return sigmoid((np.float32(obj.get("r", DEFAULT_POINT_RADIUS)) - dist) / np.float32(eps)).astype(np.float32)
 
@@ -379,12 +379,12 @@ def shape_hard_mask(x, y, obj):
 
 # ----------------------------
 # Gaussian blur utilities
-# Гауссово размытие
+# Implementation note.
 # ----------------------------
 def gaussian_kernel_1d(kernel_size: int, sigma: float) -> np.ndarray:
     """
     Create normalized 1D Gaussian kernel.
-    Создать нормированное 1D ядро Гаусса.
+    1D 
     """
     kernel_size = int(kernel_size)
     if kernel_size % 2 == 0:
@@ -399,7 +399,7 @@ def gaussian_kernel_1d(kernel_size: int, sigma: float) -> np.ndarray:
 def gaussian_blur_2d(img: np.ndarray, sigma: float, kernel_size: int) -> np.ndarray:
     """
     Simple separable Gaussian blur (horizontal + vertical).
-    Простое разделимое гауссово размытие (горизонталь + вертикаль).
+    + 
     """
     if sigma <= 0:
         return img.astype(np.float32)
@@ -407,7 +407,7 @@ def gaussian_blur_2d(img: np.ndarray, sigma: float, kernel_size: int) -> np.ndar
     pad = len(k) // 2
 
     # Blur X
-    # Размытие по X
+    # Implementation note.
     tmp = np.pad(img, ((0, 0), (pad, pad)), mode="edge")
     out_x = np.zeros_like(img, dtype=np.float32)
     for i in range(img.shape[1]):
@@ -415,7 +415,7 @@ def gaussian_blur_2d(img: np.ndarray, sigma: float, kernel_size: int) -> np.ndar
         out_x[:, i] = (window * k[None, :]).sum(axis=1)
 
     # Blur Y
-    # Размытие по Y
+    # Implementation note.
     tmp2 = np.pad(out_x, ((pad, pad), (0, 0)), mode="edge")
     out = np.zeros_like(img, dtype=np.float32)
     for j in range(img.shape[0]):
@@ -426,23 +426,23 @@ def gaussian_blur_2d(img: np.ndarray, sigma: float, kernel_size: int) -> np.ndar
 
 
 
-def source_radius_wave_scale(zdroj: dict) -> float:
+def source_radius_wave_scale(source: dict) -> float:
     """
     SOURCE radius -> visible wavelength/ring scale.
     Small radius = dense rings. Large radius = wider rings.
     This affects the real solver phase, not only Preview drawing.
     """
-    radius = _as_float(zdroj.get("radius", 0.08), 0.08)
+    radius = _as_float(source.get("radius", 0.08), 0.08)
     radius = float(np.clip(radius, 0.015, 0.35))
     return float(0.18 + radius * 9.0)
 
 
-def effective_frequency_hz(freq_hz: float, zdroj: dict) -> float:
+def effective_frequency_hz(freq_hz: float, source: dict) -> float:
     """
     Convert GUI SOURCE radius into an effective frequency used by the phase.
     Larger radius lowers effective frequency, so ring spacing becomes wider.
     """
-    return float(freq_hz) / source_radius_wave_scale(zdroj)
+    return float(freq_hz) / source_radius_wave_scale(source)
 
 
 def sigmoid(x):
@@ -454,19 +454,19 @@ def sigmoid(x):
 
 # ----------------------------
 # Soft shadow (occlusion)
-# Мягкая тень (окклюзия)
+# Implementation note.
 # ----------------------------
 def occlusion_map_geometric(X, Y, x0, y0, disks, occlusion_metal, occlusion_concrete, steps=40):
     """
-    Compute geometric occlusion map along rays from zdroj to each grid cell.
-    Посчитать карту окклюзии по лучам от источника к каждой точке сетки.
+    Compute geometric occlusion map along rays from source to each grid cell.
+    
 
     If a ray intersects a barrier disk:
-      - kov -> occlusion_metal
+      - metal -> occlusion_metal
       - other barrier -> occlusion_concrete
-    Если луч пересекает барьерный диск:
-      - kov -> occlusion_metal
-      - другой барьер -> occlusion_concrete
+    
+      - metal -> occlusion_metal
+      - other barrier -> occlusion_concrete
     """
     H, W = X.shape
     occ = np.ones((H, W), dtype=np.float32)
@@ -491,7 +491,7 @@ def occlusion_map_geometric(X, Y, x0, y0, disks, occlusion_metal, occlusion_conc
         inside = shape_hard_mask(sx, sy, obj)
         hit = inside.any(axis=2)
         occluded |= hit
-        if obj.get("material") == "kov":
+        if obj.get("material") == "metal":
             metal_hit |= hit
 
     occ[occluded & metal_hit] = float(occlusion_metal)
@@ -501,12 +501,12 @@ def occlusion_map_geometric(X, Y, x0, y0, disks, occlusion_metal, occlusion_conc
 
 # ----------------------------
 # Diffraction helpers (edge detection)
-# Дифракция (вспомогательные функции)
+# Implementation note.
 # ----------------------------
 def barrier_mask_grid(X, Y, disks):
     """
     Build boolean mask of barrier areas on the grid.
-    Построить булеву маску барьеров на сетке.
+    
     """
     mask = np.zeros_like(X, dtype=bool)
     for obj in disks:
@@ -519,7 +519,7 @@ def barrier_mask_grid(X, Y, disks):
 def erode_binary(mask: np.ndarray) -> np.ndarray:
     """
     Naive binary erosion (3x3 all-true condition).
-    Примитивная эрозия бинарной маски (условие all-true в окрестности 3x3).
+    Apply an all-true condition in a 3x3 neighborhood.
     """
     H, W = mask.shape
     m = mask
@@ -539,7 +539,7 @@ def erode_binary(mask: np.ndarray) -> np.ndarray:
 def edge_pixels(mask: np.ndarray) -> np.ndarray:
     """
     Compute edge pixels as mask minus eroded(mask).
-    Вычислить пиксели границы: mask минус eroded(mask).
+    Return mask minus eroded(mask).
     """
     if not mask.any():
         return np.zeros_like(mask, dtype=bool)
@@ -550,7 +550,7 @@ def edge_pixels(mask: np.ndarray) -> np.ndarray:
 def distance_to_edge(edge: np.ndarray, max_dist: int = 2000) -> np.ndarray:
     """
     BFS distance transform (Manhattan distance) from edge pixels.
-    BFS-преобразование расстояний (манхэттенское) до пикселей границы.
+    BFS-based distance transform
     """
     H, W = edge.shape
     dist = np.full((H, W), fill_value=max_dist, dtype=np.int32)
@@ -587,7 +587,7 @@ def distance_to_edge(edge: np.ndarray, max_dist: int = 2000) -> np.ndarray:
 
 # ----------------------------
 # Ray-march with smooth boundaries
-# Трассировка луча со сглаженными границами
+# Implementation note.
 # ----------------------------
 def raytrace_field_pretty(
     pts, source_xy, freq_hz, amplitude, materials, disks, air_abs, steps,
@@ -595,16 +595,16 @@ def raytrace_field_pretty(
 ):
     """
     Ray-march field computation with smooth disk boundaries.
-    Расчёт поля по лучам с "мягкими" границами дисков.
+    "" 
 
     Uses sigmoid blending to smoothly mix material properties along the path.
-    Использует сигмоиду для плавного смешивания свойств материалов вдоль пути.
+    
     """
     P = pts.shape[0]
     U = np.zeros((P,), dtype=np.float32)
 
     # Cache material props for speed
-    # Кэш свойств материалов для ускорения
+    # Implementation note.
     mat_cache = {}
 
     def props(mat):
@@ -615,10 +615,10 @@ def raytrace_field_pretty(
     steps = max(8, int(steps))
     t = np.linspace(0.0, 1.0, steps, dtype=np.float32)
     S = t.shape[0]
-    c_air, a_air = props("vzduch")
+    c_air, a_air = props("air")
 
     # Edge smoothing parameter (meters)
-    # Параметр сглаживания границы (в метрах)
+    # Implementation note.
     eps = max(1e-4, float(edge_smooth_m))
 
     for start in range(0, P, batch):
@@ -626,30 +626,30 @@ def raytrace_field_pretty(
         p = pts[start:end]
         B = p.shape[0]
 
-        # Segment vector from zdroj to point
-        # Вектор сегмента от источника к точке
+        # Segment vector from source to point
+        # Implementation note.
         v = p - source_xy[None, :]
         seg_len = np.sqrt((v * v).sum(axis=1) + 1e-12).astype(np.float32)
 
         # Step length along the ray
-        # Длина шага вдоль луча
+        # Implementation note.
         ds = (seg_len / max(1, (S - 1))).astype(np.float32)
 
         # Sample points along ray (sx, sy)
-        # Выборка точек вдоль луча (sx, sy)
+        # Implementation note.
         sx = source_xy[0] + v[:, 0:1] * t[None, :]
         sy = source_xy[1] + v[:, 1:2] * t[None, :]
 
-        # Start with vzduch properties everywhere
-        # Изначально везде свойства воздуха
+        # Start with air properties everywhere
+        # Implementation note.
         c_s = np.full((B, S), np.float32(c_air), dtype=np.float32)
         a_s = np.full((B, S), np.float32(a_air), dtype=np.float32)
         trans_s = np.ones((B, S), dtype=np.float32)
 
         # Blend each disk material along the ray samples
-        # Смешиваем материалы дисков вдоль луча
+        # Implementation note.
         for obj in disks:
-            mat = obj.get("material", "vzduch")
+            mat = obj.get("material", "air")
             m = shape_soft_membership(sx, sy, obj, eps).astype(np.float32)
 
             if float(m.max()) < 1e-4:
@@ -660,18 +660,18 @@ def raytrace_field_pretty(
             a_s = a_s * (1.0 - m) + np.float32(a_m) * m
 
             # Transmission blending: take minimum inside material
-            # Смешивание прохождения: берём минимум внутри материала
+            # Implementation note.
             tr = np.float32(trans_map.get(mat, 1.0))
             trans_s = trans_s * (1.0 - m) + np.minimum(trans_s, tr) * m
 
         # Compute accumulated phase and attenuation
-        # Считаем суммарную фазу и затухание
+        # Implementation note.
         k_s = (2.0 * np.pi * float(freq_hz)) / c_s
         phase = (k_s * ds[:, None]).sum(axis=1)
         decay = (a_s * ds[:, None]).sum(axis=1)
 
         # Use the strongest transmission constraint along the ray
-        # Берём наиболее "жёсткое" прохождение вдоль луча
+        # Implementation note.
         trans = trans_s.min(axis=1)
 
         U[start:end] = (float(amplitude) * np.cos(phase) * np.exp(-decay) * trans).astype(np.float32)
@@ -681,12 +681,12 @@ def raytrace_field_pretty(
 
 # ----------------------------
 # Wave-like spectral smoothing
-# Волнообразное спектральное сглаживание
+# Implementation note.
 # ----------------------------
 def smoothstep01(x):
     """
     Smoothstep in [0..1].
-    Smoothstep в диапазоне [0..1].
+    Smoothstep on the [0, 1] interval.
     """
     x = np.clip(x, 0.0, 1.0)
     return x * x * (3.0 - 2.0 * x)
@@ -695,16 +695,16 @@ def smoothstep01(x):
 def epoch_quality(pred_epochs: int, true_epochs: int, tau_fraction: float = 0.16, min_quality: float = 0.18) -> float:
     """
     Convert epoch count to a smooth learning-quality coefficient in [0, 1].
-    Преобразовать число эпох в плавный коэффициент обученности в диапазоне [0, 1].
+    Map the training progress to a smooth coefficient in [0, 1].
 
     The old linear pred_epochs / true_epochs made normal runs look too noisy
     (e.g. 2000 / 20000 = 0.10). A saturating learning curve is closer to
     how training normally behaves: the largest error drop happens early, then
     improvements become smaller.
 
-    Старое линейное pred_epochs / true_epochs делало обычные запуски слишком
-    шумными. Насыщающаяся кривая обучения больше похожа на реальное обучение:
-    основное снижение ошибки происходит в начале, затем улучшения замедляются.
+    The older linear pred_epochs / true_epochs ratio produced noisy ordinary runs.
+    
+    
     """
     pred_epochs = max(1, int(pred_epochs))
     true_epochs = max(pred_epochs, int(true_epochs))
@@ -719,15 +719,15 @@ def epoch_quality(pred_epochs: int, true_epochs: int, tau_fraction: float = 0.16
 def apply_learned_error_correction(U_pred: np.ndarray, U_true: np.ndarray, quality: float, strength: float) -> np.ndarray:
     """
     Lightweight teacher-correction step for the predicted field.
-    Лёгкий шаг коррекции от teacher-поля для предсказанного поля.
+    Apply a lightweight correction step towards the teacher field.
 
     This emulates one extra supervised refinement pass: low-quality predictions
     get a stronger correction, while a fully trained prediction is left unchanged.
-    It is deterministic and keeps all physical scéna effects from the solver.
+    It is deterministic and keeps all physical scene effects from the solver.
 
-    Это имитирует дополнительный supervised refinement pass: слабые предсказания
-    корректируются сильнее, а полностью обученное предсказание не меняется.
-    Метод детерминированный и сохраняет физические эффекты сцены.
+    This approximates an additional supervised refinement pass:
+    
+    
     """
     quality = float(np.clip(quality, 0.0, 1.0))
     strength = float(np.clip(strength, 0.0, 1.0))
@@ -740,24 +740,24 @@ def apply_learned_error_correction(U_pred: np.ndarray, U_true: np.ndarray, quali
 
 def train_field_model_to_target(U_start: np.ndarray, U_target: np.ndarray, epochs: int = 1500, lr: float = 0.08, exact_finish: bool = True):
     """
-    Train a per-scéna field model so prediction matches the target field.
-    Обучить модель поля для текущей сцены, чтобы pred совпал с target.
+    Train a per-scene field model so prediction matches the target field.
+    Train the current scene field so pred approaches the target.
 
     The trainable model is the field tensor itself, initialized from the
     analytic prediction. Gradient descent reduces MSE. With exact_finish=True
     the learned tensor is snapped to the target after optimization, giving
-    bit-exact agreement for this known training scéna.
+    bit-exact agreement for this known training scene.
 
-    Модель имеет обучаемый тензор поля, стартующий с аналитического pred.
-    Градиентный спуск уменьшает MSE. При exact_finish=True обученный тензор
-    финально фиксируется в target, поэтому для этой обучающей сцены совпадение
-    получается полным.
+    The trainable tensor starts from the analytical prediction.
+    Gradient descent minimizes MSE. With exact_finish=True,
+    target, 
+    
     """
     try:
         import torch
     except Exception:
         # Fallback without torch: deterministic relaxation toward the target.
-        # Запасной режим без torch: детерминированное приближение к target.
+        # Implementation note.
         U = U_start.astype(np.float32).copy()
         T = U_target.astype(np.float32)
         for _ in range(max(1, int(epochs))):
@@ -799,10 +799,10 @@ def spectral_wave_smooth(U: np.ndarray, dx: float, dy: float, target_cyc: float,
                          bw: float, soft: float, keep_low_ratio: float, mix: float) -> np.ndarray:
     """
     Frekvencia-domain bandpass smoothing with soft edges and optional low-frequency keep.
-    Сглаживание в частотной области: полосовой фильтр с мягкими краями и удержанием низких частот.
+    
 
     mix controls blending between original and filtered signal.
-    mix управляет смешиванием исходного и отфильтрованного сигнала.
+    mix 
     """
     mix = float(np.clip(mix, 0.0, 1.0))
     if mix <= 0.0:
@@ -815,14 +815,14 @@ def spectral_wave_smooth(U: np.ndarray, dx: float, dy: float, target_cyc: float,
     R = np.sqrt(FX * FX + FY * FY + 1e-12).astype(np.float32)
 
     # target spatial cycles for main band
-    # целевая пространственная частота для основной полосы
+    # Implementation note.
     t = float(max(1e-6, target_cyc))
     low = float(max(0.0, keep_low_ratio) * t)
     b0 = float((1.0 - bw) * t)
     b1 = float((1.0 + bw) * t)
 
     # Low-frequency keep mask
-    # Маска удержания низких частот
+    # Implementation note.
     if low > 0:
         low_edge0 = low * (1.0 - soft)
         low_edge1 = low * (1.0 + soft)
@@ -831,7 +831,7 @@ def spectral_wave_smooth(U: np.ndarray, dx: float, dy: float, target_cyc: float,
         low_mask = np.zeros_like(R, dtype=np.float32)
 
     # Band-pass mask with smooth edges
-    # Полосовая маска с мягкими краями
+    # Implementation note.
     inner0 = b0 * (1.0 - soft)
     inner1 = b0 * (1.0 + soft)
     outer0 = b1 * (1.0 - soft)
@@ -844,18 +844,18 @@ def spectral_wave_smooth(U: np.ndarray, dx: float, dy: float, target_cyc: float,
     mask = np.clip(low_mask + band_mask, 0.0, 1.0).astype(np.float32)
 
     # Apply mask in frequency domain
-    # Применяем маску в частотной области
+    # Implementation note.
     F = np.fft.fft2(U.astype(np.float32))
     Uf = np.fft.ifft2(F * mask).real.astype(np.float32)
 
     # Blend original and filtered
-    # Смешиваем исходный и отфильтрованный
+    # Implementation note.
     return ((1.0 - mix) * U.astype(np.float32) + mix * Uf).astype(np.float32)
 
 
 # ----------------------------
 # Main field computation (pred/true variants)
-# Основной расчёт поля (варианты pred/true)
+# Implementation note.
 # ----------------------------
 def compute_field_variant(
     X, Y, pts, x0, y0, freq_hz, A,
@@ -873,17 +873,17 @@ def compute_field_variant(
 ):
     """
     Compute field with quality scaling (ratio).
-    Посчитать поле с масштабированием качества (ratio).
+    Compute a field with the requested quality ratio.
 
     ratio=1.0 -> "true" (highest quality)
     ratio<1.0 -> "pred" (coarser / more artifacts)
-    ratio=1.0 -> "true" (макс. качество)
-    ratio<1.0 -> "pred" (грубее / больше артефактов)
+    ratio=1.0 -> reference-quality field
+    ratio<1.0 -> approximate predicted field
     """
     ratio = float(np.clip(ratio, 0.0, 1.0))
 
     # Make "pred" coarser when ratio is small
-    # Делаем "pred" грубее при малом ratio
+    # Implementation note.
     steps = max(10, int(round(steps_base * (0.35 + 0.65 * ratio))))
     shadow_steps = max(8, int(round(shadow_steps_base * (0.35 + 0.65 * ratio))))
     blur_sigma = float(blur_sigma_base * (0.30 + 0.70 * ratio))
@@ -892,15 +892,15 @@ def compute_field_variant(
         blur_kernel += 1
 
     # Spectral mix is the strongest "quality" knob
-    # Спектральное смешивание — самый сильный рычаг "качества"
+    # Implementation note.
     spectral_mix = float(np.clip(spectral_mix_base * (0.20 + 0.80 * ratio), 0.0, 1.0))
 
     # Diffraction also grows with ratio
-    # Дифракция тоже усиливается с ростом ratio
+    # Implementation note.
     edge_amp = float(edge_amp_base * (0.25 + 0.75 * ratio))
 
     # Distorted field (raytrace)
-    # "Искажённое" поле (трассировка лучей)
+    # Implementation note.
     U_rt = raytrace_field_pretty(
         pts=pts,
         source_xy=np.array([x0, y0], dtype=np.float32),
@@ -916,7 +916,7 @@ def compute_field_variant(
     ).reshape(Y.shape[0], X.shape[1])
 
     # Soft shadow (geometric occlusion + blur)
-    # Мягкая тень (геом. окклюзия + размытие)
+    # Implementation note.
     occ_hard = occlusion_map_geometric(
         X, Y, x0, y0, disks,
         occlusion_metal=float(occl_metal),
@@ -929,7 +929,7 @@ def compute_field_variant(
     U_shadowed = (U_rt * occ_soft).astype(np.float32)
 
     # Diffraction: compute wall mask and edge distance
-    # Дифракция: маска барьера и расстояние до края
+    # Implementation note.
     if barrier_wall_mask_cache is None:
         wall = barrier_mask_grid(X, Y, disks)
     else:
@@ -941,7 +941,7 @@ def compute_field_variant(
         dist_px = gaussian_blur_2d(dist_px.astype(np.float32), sigma=float(edge_softness), kernel_size=21)
 
     # Convert pixel distance to meters (approx) using grid cell size
-    # Переводим пиксельное расстояние в метры через размер клетки сетки
+    # Implementation note.
     xmin, xmax = WORLD["xmin"], WORLD["xmax"]
     ymin, ymax = WORLD["ymin"], WORLD["ymax"]
     nx = X.shape[1]
@@ -952,9 +952,9 @@ def compute_field_variant(
     dist_m = dist_px.astype(np.float32) * float(cell)
 
     # Edge wave term depends on shadow strength
-    # Волновая добавка на краю зависит от силы тени
+    # Implementation note.
     shadow_strength = (1.0 - occ_soft).astype(np.float32)
-    c_air = DEFAULT_C_MAP["vzduch"]
+    c_air = DEFAULT_C_MAP["air"]
     k_air = 2.0 * math.pi * float(freq_hz) / float(c_air)
 
     U_edge = (float(edge_amp) * float(A)) * np.cos(k_air * dist_m + float(edge_phase)) * np.exp(
@@ -963,16 +963,16 @@ def compute_field_variant(
     U_edge = (U_edge.astype(np.float32) * shadow_strength)
 
     # Combine raytrace field + diffraction term
-    # Итог: поле по лучам + дифракционная добавка
+    # Implementation note.
     U = (U_shadowed + U_edge).astype(np.float32)
 
     # Optionally zero out field inside barriers
-    # При необходимости обнуляем поле внутри барьеров
+    # Implementation note.
     if zero_inside_barrier:
         U[wall] = 0.0
 
     # Wave-like spectral smoothing (FFT-based)
-    # Спектральное сглаживание (через FFT)
+    # Implementation note.
     target_cyc = (k_air / (2.0 * math.pi))
     U = spectral_wave_smooth(
         U=U,
@@ -989,18 +989,18 @@ def compute_field_variant(
 
 # ----------------------------
 # CLI entry
-# Запуск из командной строки
+# Implementation note.
 # ----------------------------
 def main():
     """
-    CLI main: loads scéna, computes pred/true/err fields, saves PNG outputs.
-    Основной CLI: загружает сцену, считает pred/true/err и сохраняет PNG.
+    CLI main: loads scene, computes pred/true/err fields, saves PNG outputs.
+    CLI entry point that generates predicted/reference/error PNG outputs.
     """
     p = argparse.ArgumentParser(description="Wave-like smoothing solver (GUI compatible): pred vs true vs err")
     p.add_argument("scene_path", type=str)
 
     # epochs control quality ratio between pred and true
-    # epochs управляет отношением качества между pred и true
+    # Implementation note.
     p.add_argument("--epochs", type=int, default=2000, help="epochs for field_pred (quality level)")
     p.add_argument("--out_dir", type=str, default=None, help="custom output directory for saving results")
     p.add_argument("--make_animation", action="store_true", default=True, help="save 15 second wave_animation.gif")
@@ -1011,50 +1011,50 @@ def main():
     p.add_argument("--quality_tau_fraction", type=float, default=0.16, help="learning-curve speed; lower means faster quality growth")
     p.add_argument("--min_quality", type=float, default=0.18, help="minimum quality floor for field_pred")
     p.add_argument("--error_reduce_strength", type=float, default=0.65, help="teacher correction strength for reducing field_pred error")
-    p.add_argument("--train_to_target", action="store_true", default=False, help="train field model to the target for full scéna match")
+    p.add_argument("--train_to_target", action="store_true", default=False, help="train field model to the target for full scene match")
     p.add_argument("--no_train_to_target", dest="train_to_target", action="store_false", help="disable target training")
     p.add_argument("--train_epochs", type=int, default=1500, help="extra supervised training epochs for exact field model")
     p.add_argument("--train_lr", type=float, default=0.08, help="learning rate for exact field model")
-    p.add_argument("--exact_finish", action="store_true", default=False, help="after training, snap trained weights to target for 100 percent match on this scéna")
+    p.add_argument("--exact_finish", action="store_true", default=False, help="after training, snap trained weights to target for 100 percent match on this scene")
     p.add_argument("--no_exact_finish", dest="exact_finish", action="store_false", help="do not snap to target after training")
     p.add_argument("--perfect_accuracy", action="store_true", default=False, help="legacy alias: copy field_true directly")
     p.add_argument("--no_perfect_accuracy", dest="perfect_accuracy", action="store_false", help="disable legacy direct-copy mode")
 
     # keep old GUI args (ignored)
-    # старые аргументы GUI (игнорируются)
+    # Implementation note.
     p.add_argument("--N", type=int, default=0, help="(ignored)")
     p.add_argument("--lr", type=float, default=0.0, help="(ignored)")
 
     # resolution / ray steps
-    # разрешение / кол-во шагов по лучу
+    # Implementation note.
     p.add_argument("--nx", type=int, default=820)
     p.add_argument("--ny", type=int, default=540)
     p.add_argument("--steps", type=int, default=52)
 
     # wave parameters
-    # параметры волны
+    # Implementation note.
     p.add_argument("--freq_hz", type=float, default=None)
     p.add_argument("--amplitude", type=float, default=None)
     p.add_argument("--air_abs", type=float, default=0.03)
 
     # smooth disk boundary thickness (meters)
-    # толщина сглаживания границы дисков (в метрах)
+    # Implementation note.
     p.add_argument("--edge_smooth_m", type=float, default=0.04)
 
     # which materials act as barriers (occluders)
-    # какие материалы считаются барьерами
-    p.add_argument("--barrier_materials", nargs="+", default=["kov", "betón"])
+    # Implementation note.
+    p.add_argument("--barrier_materials", nargs="+", default=["metal", "concrete"])
     p.add_argument("--zero_inside_barrier", action="store_true")
 
     # transmissions per material
-    # коэффициенты прохождения для материалов
+    # Implementation note.
     p.add_argument("--trans_metal", type=float, default=0.03)
     p.add_argument("--trans_concrete", type=float, default=0.18)
     p.add_argument("--trans_brick", type=float, default=0.45)
     p.add_argument("--trans_glass", type=float, default=0.65)
     p.add_argument("--trans_wood", type=float, default=0.70)
     p.add_argument("--trans_water", type=float, default=0.85)
-    p.add_argument("--trans_plastic", type=float, default=0.82)
+    p.add_argument("--trans_plasticic", type=float, default=0.82)
     p.add_argument("--trans_rubber", type=float, default=0.55)
     p.add_argument("--trans_sand", type=float, default=0.62)
     p.add_argument("--trans_asphalt", type=float, default=0.58)
@@ -1063,7 +1063,7 @@ def main():
     p.add_argument("--trans_air", type=float, default=1.0)
 
     # soft shadow parameters
-    # параметры мягкой тени
+    # Implementation note.
     p.add_argument("--occlusion_metal", type=float, default=0.05)
     p.add_argument("--occlusion_concrete", type=float, default=0.25)
     p.add_argument("--shadow_steps", type=int, default=40)
@@ -1071,21 +1071,21 @@ def main():
     p.add_argument("--blur_kernel", type=int, default=51)
 
     # diffraction parameters
-    # параметры дифракции
+    # Implementation note.
     p.add_argument("--edge_amp", type=float, default=0.10)
     p.add_argument("--edge_phase", type=float, default=1.1)
     p.add_argument("--edge_decay", type=float, default=0.22)
     p.add_argument("--edge_softness", type=float, default=2.0)
 
     # wave-like spectral smoothing parameters
-    # параметры спектрального сглаживания
+    # Implementation note.
     p.add_argument("--spectral_mix", type=float, default=0.65)
     p.add_argument("--spectral_bw", type=float, default=0.30)
     p.add_argument("--spectral_soft", type=float, default=0.15)
     p.add_argument("--keep_low_ratio", type=float, default=0.10)
 
     # visualization parameters
-    # параметры визуализации
+    # Implementation note.
     p.add_argument("--cmap", type=str, default=PASTEL_CMAP)
     p.add_argument("--vmax_scale", type=float, default=PASTEL_VMAX_SCALE)
     p.add_argument("--img_alpha", type=float, default=PASTEL_ALPHA)
@@ -1101,7 +1101,7 @@ def main():
         )
 
     # Clamp epochs and compute quality ratio
-    # Ограничиваем epochs и считаем коэффициент качества
+    # Implementation note.
     pred_epochs = int(args.epochs)
     true_epochs = int(args.true_epochs)
     pred_epochs = max(100, pred_epochs)
@@ -1109,8 +1109,8 @@ def main():
 
     # Smooth learning quality in [0..1]. It keeps the old meaning of epochs
     # but avoids overly noisy predictions at common epoch counts.
-    # Плавное качество обучения в [0..1]. Сохраняет смысл epochs,
-    # но убирает чрезмерно шумный pred при обычных значениях эпох.
+    # Implementation note.
+    # Implementation note.
     ratio = epoch_quality(
         pred_epochs=pred_epochs,
         true_epochs=true_epochs,
@@ -1118,60 +1118,60 @@ def main():
         min_quality=float(args.min_quality),
     )
 
-    # Načítať scéna data
-    # Загружаем сцену
+    # Load scene data
+    # Implementation note.
     data = load_scene(args.scene_path)
-    scéna = data["scéna"]
+    scene = data["scene"]
     materials = normalize_materials(data.get("materials", {}))
-    zdroj = scéna.get("zdroj", {})
+    source = scene.get("source", {})
 
     xmin, xmax = WORLD["xmin"], WORLD["xmax"]
     ymin, ymax = WORLD["ymin"], WORLD["ymax"]
 
     # Source parameters (position, frequency, amplitude)
-    # Параметры источника (позиция, частота, амплитуда)
-    x0 = _as_float(zdroj.get("x0", 0.8), 0.8)
-    y0 = _as_float(zdroj.get("y0", 1.0), 1.0)
-    freq_hz = args.freq_hz if args.freq_hz is not None else _as_float(zdroj.get("frequency_hz", 1e9), 1e9)
-    A = args.amplitude if args.amplitude is not None else _as_float(zdroj.get("amplitude", 1.0), 1.0)
+    # Implementation note.
+    x0 = _as_float(source.get("x0", 0.8), 0.8)
+    y0 = _as_float(source.get("y0", 1.0), 1.0)
+    freq_hz = args.freq_hz if args.freq_hz is not None else _as_float(source.get("frequency_hz", 1e9), 1e9)
+    A = args.amplitude if args.amplitude is not None else _as_float(source.get("amplitude", 1.0), 1.0)
 
     # PATCH: SOURCE radius changes ring spacing in the real solver.
     # Big radius -> lower effective frequency -> wider rings.
     freq_hz_original = float(freq_hz)
-    freq_hz = effective_frequency_hz(float(freq_hz), zdroj)
+    freq_hz = effective_frequency_hz(float(freq_hz), source)
 
-    # Scene objekty list
-    # Список объектов сцены
-    objekty = scéna.get("objekty", [])
-    if not isinstance(objekty, list):
-        objekty = []
+    # Scene objects list
+    # Implementation note.
+    objects = scene.get("objects", [])
+    if not isinstance(objects, list):
+        objects = []
 
     # Define which materials are barriers and build disks list
-    # Определяем материалы-барьеры и собираем диски
+    # Implementation note.
     barrier_set = infer_barrier_set(materials, args.barrier_materials)
-    disks = build_disks(objekty, barrier_set)
+    disks = build_disks(objects, barrier_set)
 
     # Transmission coefficients map
-    # Карта коэффициентов прохождения
+    # Implementation note.
     cli_trans_map = {
-        "kov": float(args.trans_metal),
-        "betón": float(args.trans_concrete),
-        "tehla": float(args.trans_brick),
-        "sklo": float(args.trans_glass),
-        "drevo": float(args.trans_wood),
-        "voda": float(args.trans_water),
-        "plast": float(args.trans_plastic),
-        "guma": float(args.trans_rubber),
-        "piesok": float(args.trans_sand),
-        "asfalt": float(args.trans_asphalt),
-        "pena": float(args.trans_foam),
-        "ľad": float(args.trans_ice),
-        "vzduch": float(args.trans_air),
+        "metal": float(args.trans_metal),
+        "concrete": float(args.trans_concrete),
+        "brick": float(args.trans_brick),
+        "glass": float(args.trans_glass),
+        "wood": float(args.trans_wood),
+        "water": float(args.trans_water),
+        "plastic": float(args.trans_plasticic),
+        "rubber": float(args.trans_rubber),
+        "sand": float(args.trans_sand),
+        "asphalt": float(args.trans_asphalt),
+        "foam": float(args.trans_foam),
+        "ice": float(args.trans_ice),
+        "air": float(args.trans_air),
     }
     trans_map = build_transmission_map(materials, cli_trans_map)
 
     # Build computational grid
-    # Строим вычислительную сетку
+    # Implementation note.
     nx, ny = int(args.nx), int(args.ny)
     gx = np.linspace(xmin, xmax, nx, dtype=np.float32)
     gy = np.linspace(ymin, ymax, ny, dtype=np.float32)
@@ -1179,7 +1179,7 @@ def main():
     pts = np.stack([X.reshape(-1), Y.reshape(-1)], axis=1).astype(np.float32)
 
     # Compute TRUE first (ratio=1.0) and cache wall mask
-    # Сначала считаем TRUE (ratio=1.0) и кэшируем маску барьеров
+    # Implementation note.
     U_true, wall = compute_field_variant(
         X=X, Y=Y, pts=pts,
         x0=x0, y0=y0, freq_hz=freq_hz, A=A,
@@ -1206,7 +1206,7 @@ def main():
     )
 
     # Compute PRED with ratio based on epochs
-    # Считаем PRED с ratio, зависящим от epochs
+    # Implementation note.
     U_pred, _ = compute_field_variant(
         X=X, Y=Y, pts=pts,
         x0=x0, y0=y0, freq_hz=freq_hz, A=A,
@@ -1228,14 +1228,14 @@ def main():
         spectral_soft=float(args.spectral_soft),
         keep_low_ratio=float(args.keep_low_ratio),
         zero_inside_barrier=bool(args.zero_inside_barrier),
-        barrier_wall_mask_cache=wall,   # same mask / та же маска
+        barrier_wall_mask_cache=wall,   # same mask / 
         ratio=ratio,
     )
 
     # Learned/teacher correction: makes the predicted field closer to the
-    # high-quality target while preserving deterministic scéna physics.
-    # Коррекция от teacher-поля: уменьшает ошибку pred относительно true,
-    # сохраняя детерминированную физику сцены.
+    # high-quality target while preserving deterministic scene physics.
+    # Implementation note.
+    # Implementation note.
     U_pred = apply_learned_error_correction(
         U_pred=U_pred,
         U_true=U_true,
@@ -1243,13 +1243,13 @@ def main():
         strength=float(args.error_reduce_strength),
     )
 
-    # Supervised per-scéna training. This trains a small tensor model from the
+    # Supervised per-scene training. This trains a small tensor model from the
     # analytic prediction to the high-quality target. With exact_finish enabled,
-    # the final learned weights are snapped to the target, so the training scéna
+    # the final learned weights are snapped to the target, so the training scene
     # has full 100% agreement and zero error.
-    # Обучение на текущей сцене: модель-тензор учится от pred к true.
-    # При exact_finish финальные веса фиксируются в target, поэтому на этой
-    # обучающей сцене совпадение полное, ошибка равна 0.
+    # Implementation note.
+    # Implementation note.
+    # Implementation note.
     train_history = {}
     if bool(args.train_to_target):
         U_pred, train_history = train_field_model_to_target(
@@ -1263,7 +1263,7 @@ def main():
             ratio = 1.0
 
     # Legacy direct-copy mode kept for compatibility.
-    # Старый прямой режим оставлен для совместимости.
+    # Implementation note.
     if bool(args.perfect_accuracy):
         U_pred = U_true.copy().astype(np.float32)
         ratio = 1.0
@@ -1285,7 +1285,7 @@ def main():
     )
 
     # Output directory with timestamp
-    # Папка результатов с таймштампом
+    # Implementation note.
     if args.out_dir:
         out_dir = os.path.abspath(args.out_dir)
     else:
@@ -1293,7 +1293,7 @@ def main():
     os.makedirs(out_dir, exist_ok=True)
 
     # Unified symmetric scale for pred/true
-    # Единая симметричная шкала для pred/true
+    # Implementation note.
    # =========================================================
 # FIXED VISUAL SCALE
 # amplitude now REALLY changes image brightness
@@ -1306,14 +1306,14 @@ def main():
 
     def draw_objects_overlay():
         """
-        Draw scéna objekty directly on result images in a clearly visible red color.
-        Рисует объекты сцены прямо на картинках результатов хорошо заметным красным цветом.
+        Draw scene objects directly on result images in a clearly visible red color.
+        result
         """
         from matplotlib.patches import Circle, Rectangle, Polygon
         from matplotlib.transforms import Affine2D
 
         ax = plt.gca()
-        for idx, obj in enumerate(objekty, start=1):
+        for idx, obj in enumerate(objects, start=1):
             ox = _as_float(obj.get("x", 0.0), 0.0)
             oy = _as_float(obj.get("y", 0.0), 0.0)
             shape = str(obj.get("shape", obj.get("type", "circle"))).strip().lower()
@@ -1324,7 +1324,7 @@ def main():
             if shape == "square":
                 height = width
 
-            # Strong red fill + white outline so objekty stay visible on any colormap.
+            # Strong red fill + white outline so objects stay visible on any colormap.
             face = (1.0, 0.0, 0.0, 0.72)
             edge = "white"
 
@@ -1348,37 +1348,37 @@ def main():
             else:
                 ax.add_patch(Circle((ox, oy), r, facecolor=face, edgecolor=edge, linewidth=1.8, zorder=80))
 
-            # Number label on top of the objekt.
+            # Number label on top of the object.
             ax.text(ox, oy, str(idx), color="white", fontsize=9, ha="center", va="center",
                     weight="bold", zorder=85,
                     bbox=dict(boxstyle="circle,pad=0.18", facecolor="red", edgecolor="white", alpha=0.95))
 
     def draw_symbols():
         """
-        Draw material symbols at objekt locations (if enabled).
-        Нарисовать символы материалов в позициях объектов (если включено).
+        Draw material symbols at object locations (if enabled).
+        
         """
         if not args.symbols:
             return
-        for obj in objekty:
+        for obj in objects:
             ox = _as_float(obj.get("x", 0.0), 0.0)
             oy = _as_float(obj.get("y", 0.0), 0.0)
-            mat = canonical_material_name(obj.get("material", "vzduch"))
+            mat = canonical_material_name(obj.get("material", "air"))
             sym = MAT_SYMBOLS.get(mat, "?")
             # shadow layer (black)
-            # подложка (чёрная)
+            # Implementation note.
             plt.text(ox, oy, sym, color="black", fontsize=12, ha="center", va="center", alpha=0.55, weight="bold", zorder=90)
             # top layer (white)
-            # верхний слой (белый)
+            # Implementation note.
             plt.text(ox, oy, sym, color="white", fontsize=12, ha="center", va="center", alpha=0.90, weight="bold", zorder=91)
 
     def save(arr, title, fname, symmetric=True):
         """
-        Uložiť a field image to PNG using matplotlib.
-        Сохранить картинку поля в PNG через matplotlib.
+        Save a field image to PNG using matplotlib.
+        PNG matplotlib.
 
         symmetric=True uses common vmin/vmax for signed fields.
-        symmetric=True использует общие vmin/vmax для знаковых полей.
+        symmetric=True vmin/vmax 
         """
         plt.figure(figsize=(12, 5))
         if symmetric:
@@ -1401,21 +1401,21 @@ def main():
             )
         plt.colorbar()
         plt.title(title)
-        # Draw scéna objekty above the wave field.
-        # Рисуем объекты сцены поверх поля волн.
+        # Draw scene objects above the wave field.
+        # Implementation note.
         draw_objects_overlay()
 
-        # mark zdroj position
-        # отмечаем положение источника
+        # mark source position
+        # Implementation note.
         plt.scatter([x0], [y0], color="red", s=90, edgecolors="white", linewidths=1.2, zorder=100)
         draw_symbols()
         plt.savefig(os.path.join(out_dir, fname), dpi=150, bbox_inches="tight")
         plt.close()
 
-    # Uložiť required triple: pred / true / err
-    # Сохраняем тройку: pred / true / err
-    save(U_pred, "Predikované pole", "field_pred.png", symmetric=True)
-    save(U_true, "Referenčné pole", "field_true.png", symmetric=True)
+    # Save required triple: pred / true / err
+    # Implementation note.
+    save(U_pred, "Predicted field", "field_pred.png", symmetric=True)
+    save(U_true, "Reference field", "field_true.png", symmetric=True)
     plt.figure(figsize=(10, 5))
 
     plt.imshow(
@@ -1429,12 +1429,12 @@ def main():
     )
 
     cbar = plt.colorbar()
-    cbar.set_label("Rozdiel hodnôt")
+    cbar.set_label("Value difference")
 
     plt.title(" Chyba predikcie")
 
-    # Draw scéna objekty above the error map.
-    # Рисуем объекты сцены поверх карты ошибки.
+    # Draw scene objects above the error map.
+    # Implementation note.
     draw_objects_overlay()
 
     plt.scatter(
@@ -1459,8 +1459,8 @@ def main():
 
     plt.close()
 
-    # Uložiť numeric arrays too: useful for tests and for measuring error.
-    # Сохраняем также числовые массивы: удобно для тестов и измерения ошибки.
+    # Save numeric arrays too: useful for tests and for measuring error.
+    # Implementation note.
     np.save(os.path.join(out_dir, "U.npy"), U_pred.astype(np.float32))
     np.save(os.path.join(out_dir, "U_pred.npy"), U_pred.astype(np.float32))
     np.save(os.path.join(out_dir, "U_true.npy"), U_true.astype(np.float32))
@@ -1472,9 +1472,9 @@ def main():
         error=U_err.astype(np.float32),
     )
 
-    # Uložiť 15-second animated wave preview (GIF). It shows the wave front moving
+    # Save 15-second animated wave preview (GIF). It shows the wave front moving
     # and uses the solved field as the spatial amplitude/interaction pattern.
-    # Сохраняем 15-секундную анимацию волны (GIF).
+    # Implementation note.
     animation_path = None
     if bool(args.make_animation) and PIL_ANIM_OK:
         try:
@@ -1492,10 +1492,10 @@ def main():
             Xs = X[::step_y, ::step_x].astype(np.float32)
             Ys = Y[::step_y, ::step_x].astype(np.float32)
 
-            # Distance phase gives visible outward movement from the zdroj.
-            # Static solved field adds reflections/diffraction texture around objekty.
+            # Distance phase gives visible outward movement from the source.
+            # Static solved field adds reflections/diffraction texture around objects.
             dist = np.sqrt((Xs - float(x0)) ** 2 + (Ys - float(y0)) ** 2).astype(np.float32)
-            wavelength = max(0.04, float(DEFAULT_C_MAP.get("vzduch", 3.0e8)) / max(float(freq_hz), 1.0))
+            wavelength = max(0.04, float(DEFAULT_C_MAP.get("air", 3.0e8)) / max(float(freq_hz), 1.0))
             spatial_phase = 2.0 * np.pi * dist / np.float32(wavelength)
             envelope = np.maximum(np.abs(base), 0.18 * (np.max(np.abs(base)) + 1e-12))
             interaction = base + 0.35 * err_small
@@ -1524,14 +1524,14 @@ def main():
         except Exception as e:
             print("Animation error:", e, flush=True)
 
-    # Uložiť metrics text file for debugging / reproducibility
-    # Сохраняем метрики для отладки / воспроизводимости
+    # Save metrics text file for debugging / reproducibility
+    # Implementation note.
     with open(os.path.join(out_dir, "metrics.txt"), "w", encoding="utf-8") as f:
         f.write("mode=fast_analytic_wave_smoothing_pastel_symbols_pred_true_err\n")
         f.write(f"freq_hz_effective={float(freq_hz)}\n")
         f.write(f"freq_hz_original={float(freq_hz_original)}\n")
-        f.write(f"source_radius={_as_float(zdroj.get('radius',0.08),0.08)}\n")
-        f.write(f"source_radius_wave_scale={source_radius_wave_scale(zdroj)}\n")
+        f.write(f"source_radius={_as_float(source.get('radius',0.08),0.08)}\n")
+        f.write(f"source_radius_wave_scale={source_radius_wave_scale(source)}\n")
         f.write(f"amplitude={float(A)}\n")
         f.write(f"air_abs={float(args.air_abs)}\n")
         f.write(f"steps_base={int(args.steps)}\n")
@@ -1559,12 +1559,12 @@ def main():
         f.write(f"max_abs_error={max_abs_err}\n")
         f.write(f"mean_abs_error={mean_abs_err}\n")
         f.write(f"accuracy_percent={accuracy_percent}\n")
-        f.write(f"objekty={len(objekty)}\n")
+        f.write(f"objects={len(objects)}\n")
         f.write(f"vmax={vmax}\n")
         f.write(f"animation={animation_path or ''}\n")
 
     # Print output directory so GUI can parse it ("Saved results: ...")
-    # Печатаем путь к папке результатов (GUI парсит строку "Saved results: ...")
+    # Implementation note.
     print(f"Accuracy: {accuracy_percent:.6f}%", flush=True)
     print(f"Max abs error: {max_abs_err:.12g}", flush=True)
     print("Saved results:", out_dir, flush=True)

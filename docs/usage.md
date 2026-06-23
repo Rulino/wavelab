@@ -49,22 +49,22 @@ The currently working solver schema uses Slovak keys:
 
 ```yaml
 materials:
-  vzduch:
+  air:
     absorption: 0.05
     R: 0.0
     T: 1.0
     scatter: 0.0
-scéna:
-  zdroj:
+scene:
+  source:
     x0: 0.65
     y0: 1.45
     amplitude: 2.0
     frequency_hz: 1000000000.0
     radius: 0.12
-  objekty:
+  objects:
     - x: 0.7
       y: 0.6
-      material: betón
+      material: concrete
       shape: circle
       r: 0.10
       width: 0.20
@@ -77,8 +77,8 @@ For publication, either keep this schema and document it clearly, or implement a
 ## 5. Command-line scene editing
 
 ```bash
-python scene_cli.py --scéna examples/basic_scene.yaml list
-python scene_cli.py --scéna examples/basic_scene.yaml materials
+python scene_cli.py --scene examples/basic_scene.yaml list
+python scene_cli.py --scene examples/basic_scene.yaml materials
 ```
 
 The CLI currently expects the same Slovak-key YAML schema as the solver.

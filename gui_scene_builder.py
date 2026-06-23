@@ -13,7 +13,7 @@ import copy
 import math
 import random
 
-# -------- Dependency checks / Проверка зависимостей --------
+# -------- Dependency checks / Dependency checks --------
 def _missing_package_message(package_name: str, pip_name: str | None = None) -> str:
     pip_name = pip_name or package_name
     return (
@@ -39,7 +39,7 @@ except ModuleNotFoundError:
 import tkinter as tk
 from tkinter import ttk, messagebox, colorchooser
 
-# Pillow нужен, чтобы показывать PNG в интерфейсе (вкладка Results)
+# Pillow is used to display PNG files in the Results tab
 try:
     from PIL import Image, ImageTk, ImageDraw, ImageFont, ImageFilter  # type: ignore
     PIL_OK = True
@@ -47,61 +47,61 @@ except ModuleNotFoundError:
     PIL_OK = False
 
 # ----------------------------
-# MATERIALS (scéna parameters)
+# MATERIALS (scene parameters)
 # ----------------------------
 # Default physical properties for each material used in the simulation.
 # ----------------------------
-# МАТЕРИАЛЫ (параметры для сцены)
+# Materials and scene parameters
 # ----------------------------
 DEFAULT_MATERIALS = {
-    "vzduch":      {"absorption": 0.05, "R": 0.00, "T": 1.00, "scatter": 0.00},
-    "kov":    {"absorption": 5.00, "R": 0.90, "T": 0.10, "scatter": 1.00},
-    "plast":  {"absorption": 0.35, "R": 0.10, "T": 0.90, "scatter": 0.18},
-    "sklo":    {"absorption": 0.60, "R": 0.15, "T": 0.85, "scatter": 0.25},
-    "betón": {"absorption": 2.50, "R": 0.60, "T": 0.40, "scatter": 0.55},
-    "voda":    {"absorption": 0.50, "R": 0.10, "T": 0.90, "scatter": 0.25},
-    "drevo":     {"absorption": 1.00, "R": 0.30, "T": 0.70, "scatter": 0.35},
-    "guma":   {"absorption": 3.00, "R": 0.25, "T": 0.75, "scatter": 0.20},
-    "ľad":      {"absorption": 0.20, "R": 0.08, "T": 0.92, "scatter": 0.12},
-    "piesok":     {"absorption": 1.80, "R": 0.35, "T": 0.65, "scatter": 0.45},
-    "tehla":    {"absorption": 2.20, "R": 0.55, "T": 0.45, "scatter": 0.50},
-    "asfalt":  {"absorption": 3.20, "R": 0.50, "T": 0.50, "scatter": 0.40},
-    "pena":     {"absorption": 4.50, "R": 0.10, "T": 0.90, "scatter": 0.08},
+    "air":      {"absorption": 0.05, "R": 0.00, "T": 1.00, "scatter": 0.00},
+    "metal":    {"absorption": 5.00, "R": 0.90, "T": 0.10, "scatter": 1.00},
+    "plastic":  {"absorption": 0.35, "R": 0.10, "T": 0.90, "scatter": 0.18},
+    "glass":    {"absorption": 0.60, "R": 0.15, "T": 0.85, "scatter": 0.25},
+    "concrete": {"absorption": 2.50, "R": 0.60, "T": 0.40, "scatter": 0.55},
+    "water":    {"absorption": 0.50, "R": 0.10, "T": 0.90, "scatter": 0.25},
+    "wood":     {"absorption": 1.00, "R": 0.30, "T": 0.70, "scatter": 0.35},
+    "rubber":   {"absorption": 3.00, "R": 0.25, "T": 0.75, "scatter": 0.20},
+    "ice":      {"absorption": 0.20, "R": 0.08, "T": 0.92, "scatter": 0.12},
+    "sand":     {"absorption": 1.80, "R": 0.35, "T": 0.65, "scatter": 0.45},
+    "brick":    {"absorption": 2.20, "R": 0.55, "T": 0.45, "scatter": 0.50},
+    "asphalt":  {"absorption": 3.20, "R": 0.50, "T": 0.50, "scatter": 0.40},
+    "foam":     {"absorption": 4.50, "R": 0.10, "T": 0.90, "scatter": 0.08},
 }
 # Colors used to draw points in the Preview canvas
-# Цвета для отображения точек в Preview
+# Colors used for objects in the preview
 MATERIAL_COLORS = {
-    "vzduch": "#94a3b8",
-    "kov": "#f2b705",
-    "plast": "#5da8ff",
-    "sklo": "#22c7f4",
-    "betón": "#b8bec6",
-    "voda": "#2f80ff",
-    "drevo": "#b45309",
-    "guma": "#111827",
-    "ľad": "#93c5fd",
-    "piesok": "#fbbf24",
-    "tehla": "#ef4444",
-    "asfalt": "#374151",
-    "pena": "#a7f3d0",
+    "air": "#94a3b8",
+    "metal": "#f2b705",
+    "plastic": "#5da8ff",
+    "glass": "#22c7f4",
+    "concrete": "#b8bec6",
+    "water": "#2f80ff",
+    "wood": "#b45309",
+    "rubber": "#111827",
+    "ice": "#93c5fd",
+    "sand": "#fbbf24",
+    "brick": "#ef4444",
+    "asphalt": "#374151",
+    "foam": "#a7f3d0",
 }
-# Hranice sveta (scéna coordinate limits)
-# Границы "мира" (координаты сцены)
+# Hranice sveta (scene coordinate limits)
+# Scene coordinate limits
 WORLD = dict(xmin=0.0, xmax=3.0, ymin=0.0, ymax=2.0)
-# Predvolené parametre zdroja signálu
-# Параметры источника сигнала по умолчанию
+# Default source parameters
+# Default source parameters
 DEFAULT_SOURCE = dict(x0=0.7, y0=1.0, amplitude=1.0, frequency_hz=1e9, radius=0.08)
 
 SHAPES = ["circle", "square", "rectangle", "triangle"]
-DEFAULT_OBJECT = {"x": 1.0, "y": 1.0, "material": "betón", "shape": "circle", "r": 0.08, "width": 0.20, "height": 0.20, "angle": 0.0}
+DEFAULT_OBJECT = {"x": 1.0, "y": 1.0, "material": "concrete", "shape": "circle", "r": 0.08, "width": 0.20, "height": 0.20, "angle": 0.0}
 
 
 # ----------------------------
-# Утилиты
+# Utilities
 # ----------------------------
 def _to_float(s: str, default: float) -> float:
      
-    """Безопасно парсим число из строки. Поддержка запятой как десятичного разделителя."""
+    """Safely parse a number from a string. Commas are accepted as decimal separators."""
     try:
         return float((s or "").strip().replace(",", "."))
     except Exception:
@@ -109,7 +109,7 @@ def _to_float(s: str, default: float) -> float:
 
 
 def _clamp(v: float, lo: float, hi: float) -> float:
-    """Ограничить значение диапазоном [lo, hi]."""
+    """Clamp a value to the [lo, hi] range."""
      #   """Clamp value into [lo, hi] range."""
     return max(lo, min(hi, v))
 
@@ -143,10 +143,10 @@ def _validate_decimal_5(value: str) -> bool:
 
 
 
-import shutil  # <-- должен быть в импортах
+import shutil  # <-- required import
 
 def open_path_default(path: Path):
-    """Otvoriť file with default OS app (Windows/macOS/Linux/WSL)."""
+    """Open file with default OS app (Windows/macOS/Linux/WSL)."""
     path = path.resolve()
     try:
         if sys.platform.startswith("win"):
@@ -163,7 +163,7 @@ def open_path_default(path: Path):
             return
         raise FileNotFoundError("No opener found (xdg-open/open/start).")
     except Exception as e:
-        messagebox.showwarning("Nie je možné otvoriť", str(e))
+        messagebox.showwarning("Cannot open", str(e))
 
 
 
@@ -184,7 +184,7 @@ def _wsl_to_windows_path(p: Path) -> str:
     return s  # fallback
 
 def open_path_default(path: Path):
-    """Otvoriť file with default OS app (Windows/macOS/Linux/WSL-safe)."""
+    """Open file with default OS app (Windows/macOS/Linux/WSL-safe)."""
     path = path.resolve()
     try:
         # WSL: open via Windows (best), convert path first
@@ -211,10 +211,10 @@ def open_path_default(path: Path):
         raise FileNotFoundError("No opener found (WSL/Windows/macOS/xdg-open).")
 
     except Exception as e:
-        messagebox.showwarning("Nie je možné otvoriť", str(e))
+        messagebox.showwarning("Cannot open", str(e))
 
 def open_folder_default(folder: Path):
-    """Otvoriť folder in file explorer (Windows/macOS/Linux/WSL-safe)."""
+    """Open folder in file explorer (Windows/macOS/Linux/WSL-safe)."""
     folder = folder.resolve()
     try:
         # WSL: open via Windows Explorer, convert path
@@ -241,9 +241,9 @@ def open_folder_default(folder: Path):
         raise FileNotFoundError("No opener found (WSL/Windows/macOS/xdg-open).")
 
     except Exception as e:
-        messagebox.showwarning("Nie je možné otvoriť folder", str(e))
+        messagebox.showwarning("Cannot open folder", str(e))
 
-# ---- back-compat aliases (если у тебя где-то старые имена) ----
+# ---- back-compat aliases (for backward-compatible aliases) ----
 def _open_file_default(path: Path):
     open_path_default(path)
 
@@ -263,7 +263,7 @@ def _wsl_to_windows_path(p: Path) -> str:
 def open_folder_default(folder: Path):
     folder = folder.resolve()
     try:
-        # WSL -> открыть через Windows Explorer
+        # WSL -> open through Windows Explorer
         if "WSL_DISTRO_NAME" in os.environ:
             win_path = _wsl_to_windows_path(folder)
             subprocess.Popen(["cmd.exe", "/c", "start", "", win_path])
@@ -286,14 +286,14 @@ def open_folder_default(folder: Path):
 
         raise FileNotFoundError("No folder opener found.")
     except Exception as e:
-        messagebox.showwarning("Nie je možné otvoriť folder", str(e))
+        messagebox.showwarning("Cannot open folder", str(e))
 
-# алиас, если в коде где-то используется старое имя
+# alias for older code paths
 def _open_folder(path: Path):
     open_folder_default(path)
 
 
-# Строка таблицы объектов (для удобства хранения виджетов)
+# Object-table row used to keep widget references
 @dataclass
 class PointRow:
     frame: ttk.Frame
@@ -311,7 +311,7 @@ class PointRow:
 
 # ----------------------------
 # Cinematic live wave renderer
-# Красивый renderer волн прямо в этом файле
+# Embedded wave renderer
 # ----------------------------
 def _hex_to_rgb_safe(value, default=(180, 180, 180)):
     try:
@@ -359,7 +359,7 @@ def _turbo_like_colormap(v):
 
 
 def _shape_mask_np(X, Y, obj):
-    """Boolean mask of objekt shape in world coordinates."""
+    """Boolean mask of object shape in world coordinates."""
     x = float(obj.get("x", 0.0))
     y = float(obj.get("y", 0.0))
     shape = str(obj.get("shape", "circle")).lower()
@@ -412,10 +412,10 @@ def _normalize_wave_direction(direction: str) -> str:
     return aliases.get(d, "center_to_objects")
 
 
-def _cinematic_wave_endpoints(scéna, direction: str):
+def _cinematic_wave_endpoints(scene, direction: str):
     """Return (start_x, start_y, end_x, end_y) for the directed cinematic beam."""
-    src = scéna.get("zdroj", DEFAULT_SOURCE) if isinstance(scéna, dict) else DEFAULT_SOURCE
-    objs = scéna.get("objekty", []) if isinstance(scéna, dict) else []
+    src = scene.get("source", DEFAULT_SOURCE) if isinstance(scene, dict) else DEFAULT_SOURCE
+    objs = scene.get("objects", []) if isinstance(scene, dict) else []
     if not objs:
         return None
     last = objs[-1]
@@ -431,16 +431,16 @@ def _compute_cinematic_wave_field(X, Y, scene_data, t, frame_index, wave_directi
     """
     Reference/one-to-one style renderer.
 
-    Логика специально переписана под картинку-референс:
-    - одна непрерывная радиальная волна от SRC;
-    - объекты НЕ заменяют волну другой волной, а только плавно меняют фазу;
-    - тонкие гребни вместо толстых зелёных полос;
-    - тёмная мягкая тень за металлом;
-    - видимая дифракция/рассеяние вокруг 3, 4, 5 без резких границ.
+    Renderer logic used for the reference preview:
+    - one continuous radial wave from the source;
+    - objects modify phase and attenuation instead of replacing the wave;
+    - thin wave ridges instead of thick bands;
+    - soft shadow behind highly reflective objects;
+    - visible diffraction/scattering around objects without hard borders.
     """
-    scéna = scene_data.get("scéna", {}) if isinstance(scene_data, dict) else {}
-    src = scéna.get("zdroj", DEFAULT_SOURCE)
-    objs = scéna.get("objekty", []) or []
+    scene = scene_data.get("scene", {}) if isinstance(scene_data, dict) else {}
+    src = scene.get("source", DEFAULT_SOURCE)
+    objs = scene.get("objects", []) or []
     mats = scene_data.get("materials", DEFAULT_MATERIALS) if isinstance(scene_data, dict) else DEFAULT_MATERIALS
 
     x0 = float(src.get("x0", DEFAULT_SOURCE["x0"]))
@@ -478,7 +478,7 @@ def _compute_cinematic_wave_field(X, Y, scene_data, t, frame_index, wave_directi
     for obj in objs:
         ox = float(obj.get("x", 0.0))
         oy = float(obj.get("y", 0.0))
-        mat = str(obj.get("material", "vzduch")).strip().lower()
+        mat = str(obj.get("material", "air")).strip().lower()
         prop = mats.get(mat, {}) if isinstance(mats, dict) else {}
 
         R = _clamp(float(prop.get("R", prop.get("reflection", 0.20))), 0.0, 1.0)
@@ -690,10 +690,10 @@ def _world_len_to_px_y(value, height, world):
 
 def _draw_material_overlay_pil(img, scene_data, compact=False):
     """Draw real-scale object shapes and material parameters over a PIL frame."""
-    scéna = scene_data.get("scéna", {}) if isinstance(scene_data, dict) else {}
-    objs = scéna.get("objekty", []) or []
+    scene = scene_data.get("scene", {}) if isinstance(scene_data, dict) else {}
+    objs = scene.get("objects", []) or []
     mats = scene_data.get("materials", DEFAULT_MATERIALS) if isinstance(scene_data, dict) else DEFAULT_MATERIALS
-    world = scéna.get("world", WORLD)
+    world = scene.get("world", WORLD)
     w, h = img.size
     draw = ImageDraw.Draw(img, "RGBA")
     try:
@@ -709,7 +709,7 @@ def _draw_material_overlay_pil(img, scene_data, compact=False):
         return int((float(x)-xmin)/(xmax-xmin)*w), int((ymax-float(y))/(ymax-ymin)*h)
 
     try:
-        src = scéna.get("zdroj", DEFAULT_SOURCE)
+        src = scene.get("source", DEFAULT_SOURCE)
         spx, spy = wp(src.get("x0", DEFAULT_SOURCE["x0"]), src.get("y0", DEFAULT_SOURCE["y0"]))
         sr = max(5, int(min(w, h) * 0.010))
         draw.ellipse((spx-sr, spy-sr, spx+sr, spy+sr), fill=(239,68,68,215), outline=(255,255,255,245), width=2)
@@ -719,7 +719,7 @@ def _draw_material_overlay_pil(img, scene_data, compact=False):
 
     rows = []
     for idx, obj in enumerate(objs, start=1):
-        mat = str(obj.get("material", "vzduch")).strip().lower()
+        mat = str(obj.get("material", "air")).strip().lower()
         props = mats.get(mat, {}) if isinstance(mats, dict) else {}
         color = props.get("color") or MATERIAL_COLORS.get(mat, "#38bdf8")
         rgb = _hex_to_rgb_safe(color, (56,189,248))
@@ -760,7 +760,7 @@ def _draw_material_overlay_pil(img, scene_data, compact=False):
         lh = 36 + row_h * min(len(rows), 8) + 12
         lx, ly = w-lw-16, 16
         draw.rounded_rectangle((lx,ly,lx+lw,ly+lh), radius=10, fill=(2,8,23,125), outline=(255,255,255,120), width=1)
-        draw.text((lx+12, ly+10), "Материалы и физические параметры", fill=(241,245,249,245), font=font_b)
+        draw.text((lx+12, ly+10), "Materials and physical parameters", fill=(241,245,249,245), font=font_b)
         for j,(idx,mat,shape,size_txt,props,rgb) in enumerate(rows[:8]):
             y=ly+36+j*row_h
             draw.rounded_rectangle((lx+12,y+4,lx+25,y+17), radius=3, fill=(*rgb,190), outline=(255,255,255,160))
@@ -774,10 +774,10 @@ def _draw_material_overlay_pil(img, scene_data, compact=False):
 
 
 SHAPE_NAMES_SK = {
-    "circle": "kruh",
-    "square": "štvorec",
-    "rectangle": "obdĺžnik",
-    "triangle": "trojuholník",
+    "circle": "circle",
+    "square": "square",
+    "rectangle": "rectangle",
+    "triangle": "triangle",
 }
 
 def _world_to_px_for_image(x, y, width, height, world):
@@ -791,10 +791,10 @@ def _world_to_px_for_image(x, y, width, height, world):
 
 def _draw_wave_objects_only_pil(img, scene_data):
     """Draw SOURCE and real-scale objects on the wave image only; no legend panel here."""
-    scéna = scene_data.get("scéna", {}) if isinstance(scene_data, dict) else {}
-    objs = scéna.get("objekty", []) or []
+    scene = scene_data.get("scene", {}) if isinstance(scene_data, dict) else {}
+    objs = scene.get("objects", []) or []
     mats = scene_data.get("materials", DEFAULT_MATERIALS) if isinstance(scene_data, dict) else DEFAULT_MATERIALS
-    world = scéna.get("world", WORLD)
+    world = scene.get("world", WORLD)
     w, h = img.size
     draw = ImageDraw.Draw(img, "RGBA")
     try:
@@ -803,7 +803,7 @@ def _draw_wave_objects_only_pil(img, scene_data):
         font_b = ImageFont.load_default()
 
     try:
-        src = scéna.get("zdroj", DEFAULT_SOURCE)
+        src = scene.get("source", DEFAULT_SOURCE)
         spx, spy = _world_to_px_for_image(src.get("x0", DEFAULT_SOURCE["x0"]), src.get("y0", DEFAULT_SOURCE["y0"]), w, h, world)
         sr = max(6, int(min(w, h) * 0.015))
         draw.ellipse((spx-sr, spy-sr, spx+sr, spy+sr), fill=(239,68,68,230), outline=(255,255,255,250), width=3)
@@ -812,7 +812,7 @@ def _draw_wave_objects_only_pil(img, scene_data):
         pass
 
     for idx, obj in enumerate(objs, start=1):
-        mat = str(obj.get("material", "vzduch")).strip().lower()
+        mat = str(obj.get("material", "air")).strip().lower()
         props = mats.get(mat, {}) if isinstance(mats, dict) else {}
         rgb = _hex_to_rgb_safe(props.get("color") or MATERIAL_COLORS.get(mat, "#38bdf8"), (56,189,248))
         px, py = _world_to_px_for_image(obj.get("x", 0), obj.get("y", 0), w, h, world)
@@ -865,18 +865,18 @@ def _draw_side_info_panel_pil(panel_size, scene_data):
     except Exception:
         font_title = font_med = font_small = font_small_b = ImageFont.load_default()
 
-    scéna = scene_data.get("scéna", {}) if isinstance(scene_data, dict) else {}
-    objs = scéna.get("objekty", []) or []
+    scene = scene_data.get("scene", {}) if isinstance(scene_data, dict) else {}
+    objs = scene.get("objects", []) or []
     mats = scene_data.get("materials", DEFAULT_MATERIALS) if isinstance(scene_data, dict) else DEFAULT_MATERIALS
 
     pad = 28
     draw.rounded_rectangle((8, 8, panel_w-8, panel_h-8), radius=16, fill=(6,18,32,245), outline=(255,255,255,135), width=2)
-    draw.text((panel_w//2, 48), "Materiály a fyzikálne parametre", anchor="mm", fill=(245,245,245,255), font=font_title)
+    draw.text((panel_w//2, 48), "Materials and physical parameters", anchor="mm", fill=(245,245,245,255), font=font_title)
 
     y = 94
     row_h = max(36, int(panel_h * 0.060))
     for idx, obj in enumerate(objs[:5], start=1):
-        mat = str(obj.get("material", "vzduch")).strip().lower()
+        mat = str(obj.get("material", "air")).strip().lower()
         shape = str(obj.get("shape", "circle")).strip().lower()
         shape_sk = SHAPE_NAMES_SK.get(shape, shape)
         props = mats.get(mat, {}) if isinstance(mats, dict) else {}
@@ -903,10 +903,10 @@ def _draw_side_info_panel_pil(panel_size, scene_data):
     draw.line((pad, sep_y, panel_w-pad, sep_y), fill=(255,255,255,145), width=1)
     y = sep_y + 42
     lines = [
-        "R – odrazivosť (reflection)",
-        "T – priepustnosť (transmission)",
-        "α – absorpcia (útlm v materiáli)",
-        "S – rozptyl (scattering)",
+        "R – reflectivity (reflection)",
+        "T – transmission (transmission)",
+        "α – absorption (attenuation v materiali)",
+        "S – scattering (scattering)",
     ]
     for txt in lines:
         draw.text((pad, y), txt, anchor="lm", fill=(245,245,245,255), font=font_med)
@@ -922,7 +922,7 @@ def _draw_side_info_panel_pil(panel_size, scene_data):
     # if it would become inverted; Pillow raises "y1 must be >= y0".
     if box_y1 > box_y0 + 32:
         draw.rounded_rectangle((pad, box_y0, panel_w-pad, box_y1), radius=7, fill=(3,14,25,120), outline=(255,255,255,80), width=1)
-        draw.text((panel_w//2, box_y0 + 24), "Intenzita vlnenia (normalizovaná)", anchor="mm", fill=(255,255,255,255), font=font_small_b)
+        draw.text((panel_w//2, box_y0 + 24), "Intenzita wave (normalized)", anchor="mm", fill=(255,255,255,255), font=font_small_b)
         gx0, gy0 = pad+28, box_y0 + 46
         gx1, gy1 = panel_w-pad-28, min(box_y1 - 28, gy0 + 20)
         if gx1 > gx0 and gy1 > gy0:
@@ -947,8 +947,8 @@ def _render_cinematic_wave_frame(scene_data, frame_index=0, frame_count=96, widt
     if not NUMPY_OK:
         raise RuntimeError("numpy is required: pip install numpy")
 
-    scéna = scene_data.get("scéna", {})
-    world = scéna.get("world", WORLD)
+    scene = scene_data.get("scene", {})
+    world = scene.get("world", WORLD)
     xmin, xmax = float(world.get("xmin", WORLD["xmin"])), float(world.get("xmax", WORLD["xmax"]))
     ymin, ymax = float(world.get("ymin", WORLD["ymin"])), float(world.get("ymax", WORLD["ymax"]))
     world_aspect = max(0.1, (xmax - xmin) / max(1e-9, (ymax - ymin)))
@@ -1009,8 +1009,8 @@ def _render_cinematic_wave_frame(scene_data, frame_index=0, frame_count=96, widt
 
 def _save_cinematic_wave_animation(scene_data, out_dir: Path, frames=96, width=1280, height=760, fps=24, progress_cb=None, wave_direction="center_to_objects", gif_name="wave_animation.gif"):
     """
-    Uložiť cinematic wave frames and wave_animation.gif into out_dir.
-    Сохраняет красивые кадры и wave_animation.gif в папку результатов.
+    Save cinematic wave frames and wave_animation.gif into out_dir.
+    Saves rendered frames and wave_animation.gif into the results directory.
     """
     out_dir = Path(out_dir)
     frames_dir = out_dir / "cinematic_frames"
@@ -1042,29 +1042,29 @@ def _save_cinematic_wave_animation(scene_data, out_dir: Path, frames=96, width=1
     return gif_path
 
 
-#"""Otvoriť file with the system default application (Windows/macOS/Linux/WSL)."""
+#"""Open file with the system default application (Windows/macOS/Linux/WSL)."""
 class App(tk.Tk):
     def __init__(self):
         super().__init__()
-        self.title("WaveLab Studio — Návrhár scény — OBNOVENÉ PLNÉ ROZHRANIE")
+        self.title("WaveLab Studio — Scene Designer — RESTORED FULL INTERFACE")
         self.geometry("1400x900")
         self.minsize(1180, 720)
 
-        # Папка проекта и пути к файлам Project folder and file paths
+        # Project directory and file paths Project folder and file paths
         self.project_dir = Path(__file__).resolve().parent
-        self.scene_path = self.project_dir / "scéna.yaml"
+        self.scene_path = self.project_dir / "scene.yaml"
         self.solver_path = self.project_dir / "solver_simple_torch.py"
 
-        # Список объектов сцены (каждый объект: x, y, material)
-        # List of scéna objekty (each objekt: x, y, material)
-        self.objekty: List[dict] = []
+        # Scene object list; each object stores x, y, and material
+        # List of scene objects (each object: x, y, material)
+        self.objects: List[dict] = []
 
-        # Материалы, которые можно менять из GUI и сохранять в scéna.yaml
-        # Materiály editable from the GUI and persisted in scéna.yaml
+        # Materials editable from the GUI and saved to scene.yaml
+        # Materials editable from the GUI and persisted in scene.yaml
         self.materials: dict = copy.deepcopy(DEFAULT_MATERIALS)
         self.material_colors: dict = dict(MATERIAL_COLORS)
 
-        # GUI-переменные (связаны с виджетами)
+        # GUI variables linked to widgets
         # GUI variables (related to widgets)
         self.n_var = tk.IntVar(value=5)
         self.epochs_var = tk.IntVar(value=2000)
@@ -1091,11 +1091,11 @@ class App(tk.Tk):
         self.wave_direction_var = tk.StringVar(value="center_to_objects")
         self.direction_btn = None
         self.freq_ghz_var = tk.StringVar(value="1.0")
-        self.zdroj = dict(DEFAULT_SOURCE)
+        self.source = dict(DEFAULT_SOURCE)
         self.selected_obj_idx = tk.IntVar(value=1)
-        # What a click on Preview should move: zdroj or selected objekt.
-        # Что перемещает клик по Preview: источник волн или выбранный объект.
-        self.place_mode_var = tk.StringVar(value="zdroj")
+        # What a click on Preview should move: source or selected object.
+        # Preview click target: wave source or selected object.
+        self.place_mode_var = tk.StringVar(value="source")
         self.source_x_var = tk.StringVar(value=f"{DEFAULT_SOURCE['x0']:.3f}")
         self.source_y_var = tk.StringVar(value=f"{DEFAULT_SOURCE['y0']:.3f}")
         self.source_amp_var = tk.StringVar(value=f"{DEFAULT_SOURCE['amplitude']:.3f}")
@@ -1107,22 +1107,22 @@ class App(tk.Tk):
         self.snap_enabled = tk.BooleanVar(value=True)
         self.snap_step = tk.StringVar(value="0.05")
 
-        # Статусы # Statuses
+        # Implementation note.
         self.cursor_var = tk.StringVar(value="X: -, Y: -")
-        self.status_var = tk.StringVar(value="Pripravené")
+        self.status_var = tk.StringVar(value="Ready")
         self.progress_var = tk.DoubleVar(value=0.0)
         self.progress_txt = tk.StringVar(value="0%")
 
-        # Строки таблицы # Rows of the table
+        # Implementation note.
         self.rows: List[PointRow] = []
 
-        # Для запуска solver в отдельном потоке и чтения логов
+        # Runs the solver in a worker thread and reads logs
         self.running = False
         self.last_results_dir: Optional[Path] = None
         self._q: "queue.Queue[Tuple[str, str]]" = queue.Queue()
         self._polling = False
 
-        # Нужно хранить ссылки на изображения Tk, иначе они "пропадут" (GC)
+        # Keep Tk image references to avoid garbage collection
         self._img_refs = {}
         self._graph_img_refs = {}
         self._last_training_progress = 0.0
@@ -1130,17 +1130,17 @@ class App(tk.Tk):
         self._style()
         self._ui()
 
-        # Инициализация интерфейса данными: сначала пробуем загрузить scéna.yaml.
-        # Если файла нет или он сломан — показываем пример.
+        # Initialize the interface by loading scene.yaml first.
+        # If the file is missing or invalid, load the example scene.
         if not self.load_scene_from_file():
             self.apply_n()
             self.fill_example()
 
-        # Чуть позже отрисовать превью
+        # Draw the preview after widgets are initialized
         self.after(80, self.preview_scene)
 
     # ----------------------------
-    # Стили интерфейса
+    # Interface styles
     # ----------------------------
     def _style(self):
         style = ttk.Style(self)
@@ -1173,18 +1173,18 @@ class App(tk.Tk):
         return self._configure_numeric_entry(ent)
 
     # ----------------------------
-    # Построение UI
+    # Build UI
     # ----------------------------
     def _ui(self):
         root = ttk.Frame(self, padding=10)
         root.pack(fill="both", expand=True)
 
-        # Верхняя панель
+        # Top panel
         head = ttk.Frame(root)
         head.pack(fill="x", pady=(0, 8))
         ttk.Label(head, text="🌊 WaveLab Studio — Scene Designer", style="Header.TLabel").pack(side="left")
 
-        # Статус справа + прогресс-бар
+        # Status and progress bar
         right_head = ttk.Frame(head)
         right_head.pack(side="right")
         ttk.Label(right_head, textvariable=self.status_var).pack(side="right", padx=(0, 10))
@@ -1194,8 +1194,8 @@ class App(tk.Tk):
             mode="determinate", maximum=100.0, variable=self.progress_var
         ).pack(side="right", padx=(8, 8))
 
-        # Ovládanie
-        ctrl = ttk.LabelFrame(root, text="Ovládanie")
+        # Controls
+        ctrl = ttk.LabelFrame(root, text="Controls")
         ctrl.pack(fill="x", pady=(0, 10))
 
         bar = ttk.Frame(ctrl)
@@ -1204,7 +1204,7 @@ class App(tk.Tk):
         ttk.Label(bar, text="Frekvencia (GHz):").pack(side="left")
         self._configure_numeric_entry(ttk.Spinbox(bar, from_=0, to=10, increment=0.1, textvariable=self.freq_ghz_var, width=8)).pack(side="left", padx=(6, 14))
 
-        ttk.Label(bar, text="Objekty (N):").pack(side="left")
+        ttk.Label(bar, text="Objects (N):").pack(side="left")
         self._configure_numeric_entry(ttk.Spinbox(bar, from_=0, to=50, textvariable=self.n_var, width=6)).pack(side="left", padx=(6, 8))
         ttk.Button(bar, text="Apply N", command=self.apply_n).pack(side="left", padx=(0, 8))
         ttk.Button(bar, text="Add material", command=self.open_material_dialog).pack(side="left", padx=(0, 14))
@@ -1220,20 +1220,20 @@ class App(tk.Tk):
 
         ttk.Separator(bar, orient="vertical").pack(side="left", fill="y", padx=10)
 
-        ttk.Button(bar, text="Uložiť scéna.yaml", command=self.save_scene).pack(side="left", padx=4)
+        ttk.Button(bar, text="Save scene.yaml", command=self.save_scene).pack(side="left", padx=4)
         self.btn_run = ttk.Button(bar, text="▶ Run solver", style="Primary.TButton", command=self.run_solver)
         self.btn_run.pack(side="left", padx=6)
 
-        self.btn_open = ttk.Button(bar, text="Otvoriť results folder", command=self.open_results, state="disabled")
+        self.btn_open = ttk.Button(bar, text="Open results folder", command=self.open_results, state="disabled")
         self.btn_open.pack(side="left", padx=4)
 
         self.btn_restart = ttk.Button(bar, text="Restart", command=self.restart_app)
         self.btn_restart.pack(side="right", padx=4)
-        # Hidden path variable: keep it for internal updates, but don't show full scéna.yaml path in UI.
+        # Hidden path variable: keep it for internal updates, but don't show full scene.yaml path in UI.
         self.path_var = tk.StringVar(value="")
 
         # Manual SOURCE settings toolbar. This replaces the old Placement buttons.
-        # Ручная настройка начала волны вместо старых кнопок Move zdroj / Move objekt.
+        # Manual source setup replaces the older Move source/Move object controls.
         source_panel = ttk.LabelFrame(root, text="Wave start / SOURCE manual settings")
         source_panel.pack(fill="x", pady=(0, 10))
         sp = ttk.Frame(source_panel)
@@ -1260,10 +1260,10 @@ class App(tk.Tk):
         ttk.Button(sp, text="Reset", command=self.reset_source_settings).pack(side="left", padx=4)
         ttk.Label(sp, text="← this is the beginning of the wave", foreground="#64748b").pack(side="left", padx=(12, 0))
 
-        # No visible placement toolbar. Keep sel_spin absent; objekt selection still works from the table/canvas state.
+        # No visible placement toolbar. Keep sel_spin absent; object selection still works from the table/canvas state.
         self.sel_spin = None
-  # Main layout area: draggable splitter (left: objekty/preview, right: tabs)
-        # Основная область: можно тянуть разделитель и расширять блок Objekty вправо.
+  # Main layout area: draggable splitter (left: objects/preview, right: tabs)
+        # Main area with resizable split panes.
         main = ttk.PanedWindow(root, orient="horizontal")
         main.pack(fill="both", expand=True)
 
@@ -1273,22 +1273,22 @@ class App(tk.Tk):
         left_panel.rowconfigure(1, weight=3)
         main.add(left_panel, weight=4)
 
-  # Objekty table container
-        # Таблица объектов
-        obj_box = ttk.LabelFrame(left_panel, text="Objekty (materials and shapes)")
+  # Objects table container
+        # Object table
+        obj_box = ttk.LabelFrame(left_panel, text="Objects (materials and shapes)")
         obj_box.grid(row=0, column=0, sticky="nsew", padx=(0, 10), pady=(0, 10))
 
         hdr = ttk.Frame(obj_box)
         hdr.pack(fill="x", pady=(0, 6), padx=6)
         ttk.Label(hdr, text="#", width=4, anchor="center").grid(row=0, column=0, padx=3)
-        ttk.Label(hdr, text="Materiál", width=13, anchor="center").grid(row=0, column=1, padx=3)
+        ttk.Label(hdr, text="Material", width=13, anchor="center").grid(row=0, column=1, padx=3)
         ttk.Label(hdr, text="Shape", width=10, anchor="center").grid(row=0, column=2, padx=3)
         ttk.Label(hdr, text="X", width=8, anchor="center").grid(row=0, column=3, padx=3)
         ttk.Label(hdr, text="Y", width=8, anchor="center").grid(row=0, column=4, padx=3)
         ttk.Label(hdr, text="Parameters", width=42, anchor="center").grid(row=0, column=5, columnspan=6, padx=3)
         ttk.Label(hdr, text="", width=8, anchor="center").grid(row=0, column=11, padx=3)
       # Scrollable table: Canvas + inner Frame
-        # Прокручиваемая таблица: Canvas + Frame внутри
+        # Scrollable table using a Canvas and embedded Frame
         table_wrap = ttk.Frame(obj_box)
         table_wrap.pack(fill="both", expand=True, padx=6, pady=(0, 6))
         table_wrap.rowconfigure(0, weight=1)
@@ -1305,24 +1305,24 @@ class App(tk.Tk):
         self.table_scroll.grid(row=0, column=1, sticky="ns")
         self.table_xscroll.grid(row=1, column=0, sticky="ew")
 
-        # Bottom objekt/material actions. Kept in the Objekty block so the main style/layout stays unchanged.
-        # Нижние кнопки для добавления/удаления объектов и материалов.
+        # Bottom object/material actions. Kept in the Objects block so the main style/layout stays unchanged.
+        # Bottom buttons for adding or deleting objects and materials.
         obj_actions = ttk.Frame(obj_box)
         obj_actions.pack(fill="x", padx=6, pady=(0, 8))
-        ttk.Button(obj_actions, text=" Add objekt", style="Primary.TButton", command=self.add_object).pack(side="left", padx=(0, 6))
-        ttk.Button(obj_actions, text=" Vymazať selected", style="Danger.TButton", command=self.delete_selected_object).pack(side="left", padx=(0, 10))
+        ttk.Button(obj_actions, text=" Add object", style="Primary.TButton", command=self.add_object).pack(side="left", padx=(0, 6))
+        ttk.Button(obj_actions, text=" Delete selected", style="Danger.TButton", command=self.delete_selected_object).pack(side="left", padx=(0, 10))
         ttk.Separator(obj_actions, orient="vertical").pack(side="left", fill="y", padx=8)
         
 
 # Preview canvas container
-        # Preview холст
+        # Implementation note.
         prev_box = ttk.LabelFrame(left_panel, text="Preview")
         prev_box.grid(row=1, column=0, sticky="nsew", padx=(0, 10))
         self.preview = tk.Canvas(prev_box, background="#0b1220")
         self.preview.pack(fill="both", expand=True, padx=6, pady=(6, 0))
         # Photoshop-like direct editing on Preview:
-        # click/drag objekt = move, corner handle = resize, top handle = rotate.
-        # Источник волны тоже можно двигать мышью; правый handle меняет amplitude, верхний handle меняет размер SOURCE.
+        # click/drag object = move, corner handle = resize, top handle = rotate.
+        # The source can be moved by mouse; the right handle changes amplitude and the top handle changes source radius.
         self.preview.bind("<ButtonPress-1>", self._on_preview_press)
         self.preview.bind("<B1-Motion>", self._on_preview_drag)
         self.preview.bind("<ButtonRelease-1>", self._on_preview_release)
@@ -1332,21 +1332,21 @@ class App(tk.Tk):
         self._preview_handles = {}
         ttk.Label(prev_box, textvariable=self.cursor_var, anchor="w").pack(fill="x", padx=10, pady=(4, 6))
 # Mouse move – show world coordinates
-        # Правая часть: Notebook (Log/Results)
+        # Right panel: notebook tabs for logs and results
         right = ttk.Notebook(main)
         main.add(right, weight=2)
 # Log tab
-        # Лог
+        # Log
         log_tab = ttk.Frame(right)
         right.add(log_tab, text="Log")
         self.log = tk.Text(log_tab, height=10, wrap="word", background="#0b1220", foreground="#e5e7eb")
         self.log.pack(fill="both", expand=True, padx=6, pady=6)
  # Results tab
-        # Результаты
+        # Results
         res_tab = ttk.Frame(right)
         right.add(res_tab, text="Results")
  # Results tab
-        # ✅ Results: горизонтальная и вертикальная прокрутка
+        # ✅ Results: horizontal and vertical scrolling
         self.res_canvas = tk.Canvas(res_tab, highlightthickness=0)
         self.res_hscroll = ttk.Scrollbar(res_tab, orient="horizontal", command=self.res_canvas.xview)
         self.res_vscroll = ttk.Scrollbar(res_tab, orient="vertical", command=self.res_canvas.yview)
@@ -1383,12 +1383,12 @@ class App(tk.Tk):
         ).pack(side="left", padx=(0, 6))
         ttk.Button(
             top_an,
-            text=" Uložiť Report to Generation Folder",
+            text=" Save Report to Generation Folder",
             command=self.save_ai_report_to_generation_folder
         ).pack(side="left", padx=(0, 6))
         ttk.Button(
             top_an,
-            text=" Otvoriť Generation Folder",
+            text=" Open Generation Folder",
             command=self.open_results
         ).pack(side="left", padx=(0, 6))
 
@@ -1444,7 +1444,7 @@ class App(tk.Tk):
         ).pack(side="left", padx=(0, 6))
         ttk.Button(
             graphs_top,
-            text="📂 Otvoriť Generation Folder",
+            text="📂 Open Generation Folder",
             command=self.open_results
         ).pack(side="left", padx=(0, 6))
         ttk.Label(
@@ -1503,13 +1503,13 @@ class App(tk.Tk):
         ).pack(side="left", padx=(0, 6))
         self.direction_btn = ttk.Button(
             live_top,
-            text="Direction: center → objekty",
+            text="Direction: center → objects",
             command=self.toggle_wave_direction_and_render
         )
         self.direction_btn.pack(side="left", padx=(0, 6))
         ttk.Button(
             live_top,
-            text="📂 Otvoriť video folder",
+            text="📂 Open video folder",
             command=self.open_results
         ).pack(side="left", padx=(0, 6))
 
@@ -1570,14 +1570,14 @@ class App(tk.Tk):
         saved_tab = ttk.Frame(right)
         right.add(saved_tab, text="Saved generations")
 
-        save_top = ttk.LabelFrame(saved_tab, text="Uložiť current generation")
+        save_top = ttk.LabelFrame(saved_tab, text="Save current generation")
         save_top.pack(fill="x", padx=6, pady=6)
         row1 = ttk.Frame(save_top)
         row1.pack(fill="x", padx=6, pady=(6, 3))
         ttk.Label(row1, text="File name:").pack(side="left")
         self.gen_name_entry = ttk.Entry(row1, textvariable=self.gen_title_var, width=34)
         self.gen_name_entry.pack(side="left", padx=(6, 10), fill="x", expand=True)
-        self.btn_save_generation = ttk.Button(row1, text="Uložiť generation", command=self.save_current_generation, state="disabled")
+        self.btn_save_generation = ttk.Button(row1, text="Save generation", command=self.save_current_generation, state="disabled")
         self.btn_save_generation.pack(side="left", padx=(0, 6))
         self.gen_title_var.trace_add("write", lambda *_: self._update_save_generation_button())
         ttk.Button(row1, text="Refresh", command=self.refresh_saved_generations).pack(side="left")
@@ -1605,8 +1605,8 @@ class App(tk.Tk):
 
         btns_saved = ttk.Frame(left_saved)
         btns_saved.grid(row=1, column=0, columnspan=2, sticky="ew", pady=(6, 0))
-        ttk.Button(btns_saved, text="Otvoriť folder", command=self.open_selected_generation_folder).pack(side="left", padx=(0, 6))
-        ttk.Button(btns_saved, text="Otvoriť image", command=self.open_selected_generation_image).pack(side="left")
+        ttk.Button(btns_saved, text="Open folder", command=self.open_selected_generation_folder).pack(side="left", padx=(0, 6))
+        ttk.Button(btns_saved, text="Open image", command=self.open_selected_generation_image).pack(side="left")
 
         right_saved = ttk.Frame(saved_body)
         right_saved.grid(row=0, column=1, sticky="nsew")
@@ -1614,7 +1614,7 @@ class App(tk.Tk):
         right_saved.rowconfigure(2, weight=1)
 
         # Three preview pictures in one row: Pred / True / Error
-        # Три картинки в один ряд: Pred / True / Error
+        # Implementation note.
         preview_row = ttk.Frame(right_saved)
         preview_row.grid(row=0, column=0, sticky="ew", pady=(0, 6))
         self.gen_preview_labels = {}
@@ -1630,8 +1630,8 @@ class App(tk.Tk):
         video_row.grid(row=1, column=0, sticky="ew", pady=(0, 6))
         self.gen_video_label = ttk.Label(video_row, text="Video: wave_animation.gif")
         self.gen_video_label.pack(side="left", padx=(0, 10))
-        ttk.Button(video_row, text="Otvoriť video", command=self.open_selected_generation_video).pack(side="left", padx=(0, 6))
-        ttk.Button(video_row, text="Otvoriť video folder", command=self.open_selected_generation_folder).pack(side="left")
+        ttk.Button(video_row, text="Open video", command=self.open_selected_generation_video).pack(side="left", padx=(0, 6))
+        ttk.Button(video_row, text="Open video folder", command=self.open_selected_generation_folder).pack(side="left")
 
         self.gen_view = tk.Text(right_saved, wrap="word", background="#0b1220", foreground="#e5e7eb")
         self.gen_view.grid(row=2, column=0, sticky="nsew")
@@ -1640,11 +1640,11 @@ class App(tk.Tk):
 
 
     # ----------------------------
-    # Materiály editor
-    # Редактор материалов
+    # Materials editor
+    # Material editor
     # ----------------------------
     def load_scene_from_file(self) -> bool:
-        """Načítať materials and objekty from existing scéna.yaml if possible."""
+        """Load materials and objects from existing scene.yaml if possible."""
         if not self.scene_path.exists():
             return False
         try:
@@ -1665,20 +1665,20 @@ class App(tk.Tk):
                     if isinstance(color, str) and color.startswith("#"):
                         self.material_colors[key] = color
 
-            scéna = data.get("scéna", {}) if isinstance(data.get("scéna", {}), dict) else {}
-            src = scéna.get("zdroj", {}) if isinstance(scéna.get("zdroj", {}), dict) else {}
-            self.zdroj = dict(DEFAULT_SOURCE)
-            self.zdroj.update(src)
-            self._set_source_xy(self.zdroj.get("x0", DEFAULT_SOURCE["x0"]), self.zdroj.get("y0", DEFAULT_SOURCE["y0"]))
-            self.source_amp_var.set(f"{float(self.zdroj.get('amplitude', DEFAULT_SOURCE['amplitude'])):.3f}")
-            self.source_radius_var.set(f"{float(self.zdroj.get('radius', DEFAULT_SOURCE.get('radius', 0.08))):.3f}")
+            scene = data.get("scene", {}) if isinstance(data.get("scene", {}), dict) else {}
+            src = scene.get("source", {}) if isinstance(scene.get("source", {}), dict) else {}
+            self.source = dict(DEFAULT_SOURCE)
+            self.source.update(src)
+            self._set_source_xy(self.source.get("x0", DEFAULT_SOURCE["x0"]), self.source.get("y0", DEFAULT_SOURCE["y0"]))
+            self.source_amp_var.set(f"{float(self.source.get('amplitude', DEFAULT_SOURCE['amplitude'])):.3f}")
+            self.source_radius_var.set(f"{float(self.source.get('radius', DEFAULT_SOURCE.get('radius', 0.08))):.3f}")
             if "frequency_hz" in src:
                 self.freq_ghz_var.set(f"{_to_float(str(src.get('frequency_hz')), 1e9) / 1e9:g}")
 
-            objs = scéna.get("objekty", [])
+            objs = scene.get("objects", [])
             if not isinstance(objs, list):
                 return False
-            self.objekty = []
+            self.objects = []
             for o in objs:
                 if not isinstance(o, dict):
                     continue
@@ -1688,29 +1688,29 @@ class App(tk.Tk):
                 r = abs(_to_float(str(o.get("r", o.get("radius", DEFAULT_OBJECT["r"]))), DEFAULT_OBJECT["r"]))
                 width = abs(_to_float(str(o.get("width", max(2.0 * r, DEFAULT_OBJECT["width"]))), DEFAULT_OBJECT["width"]))
                 height = abs(_to_float(str(o.get("height", max(2.0 * r, DEFAULT_OBJECT["height"]))), DEFAULT_OBJECT["height"]))
-                self.objekty.append({
+                self.objects.append({
                     "x": _clamp(_to_float(str(o.get("x", 1.0)), 1.0), WORLD["xmin"], WORLD["xmax"]),
                     "y": _clamp(_to_float(str(o.get("y", 1.0)), 1.0), WORLD["ymin"], WORLD["ymax"]),
-                    "material": str(o.get("material", "betón")).strip().lower(),
+                    "material": str(o.get("material", "concrete")).strip().lower(),
                     "shape": shape,
                     "r": max(0.005, r),
                     "width": max(0.005, width),
                     "height": max(0.005, height),
                     "angle": _to_float(str(o.get("angle", 0.0)), 0.0),
                 })
-            self.n_var.set(len(self.objekty))
+            self.n_var.set(len(self.objects))
             self._rebuild_table()
             self.preview_scene()
-            self._log(f"[Načítať] Loaded {self.scene_path}\n")
+            self._log(f"[Load] Loaded {self.scene_path}\n")
             return True
         except Exception as e:
-            self._log(f"[Načítať] Cannot load scéna.yaml: {e}\n")
+            self._log(f"[Load] Cannot load scene.yaml: {e}\n")
             return False
 
     def open_material_dialog(self):
-        """Dialog where user can create/edit a material and save it into scéna.yaml."""
+        """Dialog where user can create/edit a material and save it into scene.yaml."""
         win = tk.Toplevel(self)
-        win.title("Add material / Добавить материал")
+        win.title("Add material")
         win.transient(self)
         win.grab_set()
         win.resizable(False, False)
@@ -1729,7 +1729,7 @@ class App(tk.Tk):
 
         frm = ttk.Frame(win, padding=12)
         frm.pack(fill="both", expand=True)
-        ttk.Label(frm, text="Materiál name:").grid(row=0, column=0, sticky="w", pady=4)
+        ttk.Label(frm, text="Material name:").grid(row=0, column=0, sticky="w", pady=4)
         ttk.Entry(frm, textvariable=vars_["name"], width=24).grid(row=0, column=1, sticky="ew", pady=4)
 
         labels = [
@@ -1757,7 +1757,7 @@ class App(tk.Tk):
         ttk.Button(frm, text="Choose", command=choose_color).grid(row=6, column=2, sticky="e", pady=4)
 
         ttk.Checkbutton(frm, text="Barrier / wall material", variable=vars_["barrier"]).grid(row=7, column=0, columnspan=3, sticky="w", pady=(8, 2))
-        ttk.Checkbutton(frm, text="Use for selected objekt", variable=vars_["use_selected"]).grid(row=8, column=0, columnspan=3, sticky="w", pady=2)
+        ttk.Checkbutton(frm, text="Use for selected object", variable=vars_["use_selected"]).grid(row=8, column=0, columnspan=3, sticky="w", pady=2)
 
         btns = ttk.Frame(frm)
         btns.grid(row=9, column=0, columnspan=3, sticky="e", pady=(12, 0))
@@ -1768,7 +1768,7 @@ class App(tk.Tk):
                 messagebox.showerror("Bad name", "Use only latin letters, numbers, _ or -", parent=win)
                 return
             if name in self.materials:
-                if not messagebox.askyesno("Overwrite?", f"Materiál '{name}' already exists. Replace it?", parent=win):
+                if not messagebox.askyesno("Overwrite?", f"Material '{name}' already exists. Replace it?", parent=win):
                     return
             props = {
                 "c": max(1.0, _to_float(vars_["c"].get(), 3.0e8)),
@@ -1782,36 +1782,36 @@ class App(tk.Tk):
             self.materials[name] = props
             self.material_colors[name] = props["color"]
 
-            if vars_["use_selected"].get() and self.objekty:
-                sel = max(1, min(len(self.objekty), int(self.selected_obj_idx.get()))) - 1
-                self.objekty[sel]["material"] = name
+            if vars_["use_selected"].get() and self.objects:
+                sel = max(1, min(len(self.objects), int(self.selected_obj_idx.get()))) - 1
+                self.objects[sel]["material"] = name
 
             self._rebuild_table()
             self.preview_scene()
             self.save_scene()
-            self._log(f"[Materiál] Saved material '{name}' into scéna.yaml\n")
+            self._log(f"[Material] Saved material '{name}' into scene.yaml\n")
             win.destroy()
 
         ttk.Button(btns, text="Cancel", command=win.destroy).pack(side="right", padx=(8, 0))
-        ttk.Button(btns, text="Uložiť material", style="Primary.TButton", command=save_material).pack(side="right")
+        ttk.Button(btns, text="Save material", style="Primary.TButton", command=save_material).pack(side="right")
         win.bind("<Return>", lambda _e: save_material())
         win.wait_window()
 
         # ----------------------------
-    # Objekty (materials and shapes)
-    # Объекты (точки)
+    # Objects (materials and shapes)
+    # Implementation note.
     # ----------------------------
     def apply_n(self):
         """
-        Apply N (number of objekty). Adds/removes points and updates table/preview.
-        Применить N (кол-во объектов). Добавляет/удаляет точки и обновляет таблицу/превью.
+        Apply N (number of objects). Adds/removes points and updates table/preview.
+        Apply the requested number of objects, then update the table and preview.
         """
         n = int(self.n_var.get())
         if n < 0:
             n = 0
 
-        # Configure selected objekt spinbox range
-        # Настроить диапазон спинбокса выбранного объекта
+        # Configure selected object spinbox range
+        # Update the selected-object spinbox range
         if getattr(self, "sel_spin", None) is not None:
             try:
                 self.sel_spin.configure(from_=1, to=max(1, n))
@@ -1820,33 +1820,33 @@ class App(tk.Tk):
         if self.selected_obj_idx.get() > max(1, n):
             self.selected_obj_idx.set(max(1, n))
 
-        # Resize objekty list to match N
-        # Догнать список объектов до нужного размера
-        # Новые объекты получают случайный материал и форму.
-        while len(self.objekty) < n:
-            self.objekty.append(self._make_random_object())
-        while len(self.objekty) > n:
-            self.objekty.pop()
+        # Resize objects list to match N
+        # Resize the object list to the requested count
+        # New objects receive random material and shape defaults.
+        while len(self.objects) < n:
+            self.objects.append(self._make_random_object())
+        while len(self.objects) > n:
+            self.objects.pop()
 
         self._rebuild_table()
         self.preview_scene()
 
     def _rebuild_table(self):
         """
-        Rebuild the entire objekty table (simple and reliable approach).
-        Полностью пересобирает таблицу объектов (простое и надежное решение).
+        Rebuild the entire objects table (simple and reliable approach).
+        Rebuild the full object table.
         """
         # Clear table UI
-        # Очищаем таблицу UI
+        # Clear the table UI
         for w in self.table_inner.winfo_children():
             w.destroy()
         self.rows.clear()
 
         # Available materials list (sorted)
-        # Список доступных материалов (отсортирован)
+        # Sorted list of available materials
         mats = sorted(self.materials.keys())
 
-        for i, obj in enumerate(self.objekty, start=1):
+        for i, obj in enumerate(self.objects, start=1):
             obj.setdefault("shape", "circle")
             obj.setdefault("r", DEFAULT_OBJECT["r"])
             obj.setdefault("width", max(DEFAULT_OBJECT["width"], 2.0 * float(obj.get("r", DEFAULT_OBJECT["r"]))))
@@ -1859,7 +1859,7 @@ class App(tk.Tk):
             ttk.Label(fr, text=str(i), width=4, anchor="center").grid(row=0, column=0, padx=3)
 
             mat_cb = ttk.Combobox(fr, values=mats, state="readonly", width=13)
-            mat_cb.set(obj.get("material", "betón"))
+            mat_cb.set(obj.get("material", "concrete"))
             mat_cb.grid(row=0, column=1, padx=3)
 
             shape_cb = ttk.Combobox(fr, values=SHAPES, state="readonly", width=10)
@@ -1916,24 +1916,24 @@ class App(tk.Tk):
                     put("width", "Width")
                     put("height", "Height")
                     put("angle", "Angle")
-                else:  # trojuholník
+                else:  # triangle
                     put("width", "Base")
                     put("height", "Height")
                     put("angle", "Angle")
 
             show_params(str(obj.get("shape", "circle")).lower())
 
-            del_btn = ttk.Button(fr, text="Vymazať", style="Danger.TButton", command=lambda ii=i: self.delete_object(ii))
+            del_btn = ttk.Button(fr, text="Delete", style="Danger.TButton", command=lambda ii=i: self.delete_object(ii))
             del_btn.grid(row=0, column=11, padx=3)
 
-            # Clicking any row/control marks it as selected for the bottom "Vymazať selected" button.
-            # Клик по строке выбирает объект для нижней кнопки "Vymazať selected".
+            # Clicking any row/control marks it as selected for the bottom "Delete selected" button.
+            # Clicking a row selects the object for the bottom button "Delete selected".
             for widget in (fr, mat_cb, shape_cb, x_ent, y_ent, radius_ent, width_ent, height_ent, angle_ent, del_btn):
                 widget.bind("<Button-1>", lambda _evt, ii=i: self.selected_obj_idx.set(ii), add="+")
 
             def make_mat_cb(ii: int, cb: ttk.Combobox):
                 def _on(_evt=None):
-                    self.objekty[ii]["material"] = (cb.get() or "betón").strip().lower()
+                    self.objects[ii]["material"] = (cb.get() or "concrete").strip().lower()
                     self.preview_scene()
                 return _on
 
@@ -1942,12 +1942,12 @@ class App(tk.Tk):
                     val = (cb.get() or "circle").strip().lower()
                     if val not in SHAPES:
                         val = "circle"
-                    self.objekty[ii]["shape"] = val
-                    # If štvorec is selected, use one size value and keep width/height equal.
+                    self.objects[ii]["shape"] = val
+                    # If square is selected, use one size value and keep width/height equal.
                     if val == "square":
-                        size = max(0.005, _to_float(width_ent.get(), float(self.objekty[ii].get("width", DEFAULT_OBJECT["width"]))))
-                        self.objekty[ii]["width"] = size
-                        self.objekty[ii]["height"] = size
+                        size = max(0.005, _to_float(width_ent.get(), float(self.objects[ii].get("width", DEFAULT_OBJECT["width"]))))
+                        self.objects[ii]["width"] = size
+                        self.objects[ii]["height"] = size
                         width_ent.delete(0, "end"); width_ent.insert(0, f"{size:.3f}")
                         height_ent.delete(0, "end"); height_ent.insert(0, f"{size:.3f}")
                     show_fn(val)
@@ -1957,15 +1957,15 @@ class App(tk.Tk):
 
             def make_apply(ii: int, ex, ey, er, ew, eh, ea):
                 def _apply(_evt=None):
-                    x = _clamp(_to_float(ex.get(), float(self.objekty[ii]["x"])), WORLD["xmin"], WORLD["xmax"])
-                    y = _clamp(_to_float(ey.get(), float(self.objekty[ii]["y"])), WORLD["ymin"], WORLD["ymax"])
-                    r = max(0.005, _to_float(er.get(), float(self.objekty[ii].get("r", DEFAULT_OBJECT["r"]))))
-                    ww = max(0.005, _to_float(ew.get(), float(self.objekty[ii].get("width", DEFAULT_OBJECT["width"]))))
-                    hh = max(0.005, _to_float(eh.get(), float(self.objekty[ii].get("height", DEFAULT_OBJECT["height"]))))
-                    if str(self.objekty[ii].get("shape", "circle")).lower() == "square":
+                    x = _clamp(_to_float(ex.get(), float(self.objects[ii]["x"])), WORLD["xmin"], WORLD["xmax"])
+                    y = _clamp(_to_float(ey.get(), float(self.objects[ii]["y"])), WORLD["ymin"], WORLD["ymax"])
+                    r = max(0.005, _to_float(er.get(), float(self.objects[ii].get("r", DEFAULT_OBJECT["r"]))))
+                    ww = max(0.005, _to_float(ew.get(), float(self.objects[ii].get("width", DEFAULT_OBJECT["width"]))))
+                    hh = max(0.005, _to_float(eh.get(), float(self.objects[ii].get("height", DEFAULT_OBJECT["height"]))))
+                    if str(self.objects[ii].get("shape", "circle")).lower() == "square":
                         hh = ww
-                    ang = _to_float(ea.get(), float(self.objekty[ii].get("angle", 0.0)))
-                    self.objekty[ii].update({"x": float(x), "y": float(y), "r": float(r), "width": float(ww), "height": float(hh), "angle": float(ang)})
+                    ang = _to_float(ea.get(), float(self.objects[ii].get("angle", 0.0)))
+                    self.objects[ii].update({"x": float(x), "y": float(y), "r": float(r), "width": float(ww), "height": float(hh), "angle": float(ang)})
                     ex.delete(0, "end"); ex.insert(0, f"{x:.3f}")
                     ey.delete(0, "end"); ey.insert(0, f"{y:.3f}")
                     er.delete(0, "end"); er.insert(0, f"{r:.3f}")
@@ -1981,10 +1981,10 @@ class App(tk.Tk):
             for ent in (x_ent, y_ent, radius_ent, width_ent, height_ent, angle_ent):
                 ent.bind("<Return>", apply_vals)
                 ent.bind("<FocusOut>", apply_vals)
-        # Update selected objekt range after rebuild.
+        # Update selected object range after rebuild.
         # The spinbox exists only when the separate Editor settings window is open.
-        # Поэтому проверяем self.sel_spin, иначе запуск падает, когда верхняя Placement-панель удалена.
-        n = len(self.objekty)
+        # Check self.sel_spin because the older Placement toolbar may be absent.
+        n = len(self.objects)
         if getattr(self, "sel_spin", None) is not None:
             try:
                 self.sel_spin.configure(from_=1, to=max(1, n))
@@ -1999,14 +1999,14 @@ class App(tk.Tk):
         """Create one new object with random material and random shape."""
         obj = dict(DEFAULT_OBJECT)
 
-        mats = [m for m in sorted(self.materials.keys()) if str(m).strip().lower() != "vzduch"]
-        obj["material"] = random.choice(mats) if mats else "betón"
+        mats = [m for m in sorted(self.materials.keys()) if str(m).strip().lower() != "air"]
+        obj["material"] = random.choice(mats) if mats else "concrete"
 
         shape = random.choice(SHAPES)
         obj["shape"] = shape
 
-        # Put the new objekt near the center but slightly offset so it is visible immediately.
-        offset = (len(self.objekty) % 6) * 0.08
+        # Put the new object near the center but slightly offset so it is visible immediately.
+        offset = (len(self.objects) % 6) * 0.08
         obj["x"] = _clamp(1.0 + offset, WORLD["xmin"], WORLD["xmax"])
         obj["y"] = _clamp(1.0 + offset, WORLD["ymin"], WORLD["ymax"])
 
@@ -2037,32 +2037,32 @@ class App(tk.Tk):
         return obj
 
     def add_object(self):
-        """Add one new objekt to the scéna and select it."""
+        """Add one new object to the scene and select it."""
         obj = self._make_random_object()
-        self.objekty.append(obj)
-        self.n_var.set(len(self.objekty))
-        self.selected_obj_idx.set(len(self.objekty))
+        self.objects.append(obj)
+        self.n_var.set(len(self.objects))
+        self.selected_obj_idx.set(len(self.objects))
         self._rebuild_table()
         self.preview_scene()
-        self._log(f"[Object] Added random objekt #{len(self.objekty)}: {obj.get('material')} / {obj.get('shape')}\n")
+        self._log(f"[Object] Added random object #{len(self.objects)}: {obj.get('material')} / {obj.get('shape')}\n")
 
     def delete_selected_object(self):
-        """Vymazať currently selected objekt from the table/preview."""
-        if not self.objekty:
-            messagebox.showinfo("No objekty", "There are no objekty to delete.", parent=self)
+        """Delete currently selected object from the table/preview."""
+        if not self.objects:
+            messagebox.showinfo("No objects", "There are no objects to delete.", parent=self)
             return
-        idx = int(_clamp(int(self.selected_obj_idx.get()), 1, len(self.objekty)))
+        idx = int(_clamp(int(self.selected_obj_idx.get()), 1, len(self.objects)))
         self.delete_object(idx)
 
     def delete_material_dialog(self):
-        """Vymazať a material from the material list and update objekty that used it."""
-        removable = sorted([m for m in self.materials.keys() if str(m).lower() != "vzduch"])
+        """Delete a material from the material list and update objects that used it."""
+        removable = sorted([m for m in self.materials.keys() if str(m).lower() != "air"])
         if not removable:
-            messagebox.showinfo("No materials", "There are no removable materials. Materiál 'vzduch' is required.", parent=self)
+            messagebox.showinfo("No materials", "There are no removable materials. Material 'air' is required.", parent=self)
             return
 
         win = tk.Toplevel(self)
-        win.title("Vymazať material / Удалить материал")
+        win.title("Delete material")
         win.transient(self)
         win.grab_set()
         win.resizable(False, False)
@@ -2073,70 +2073,70 @@ class App(tk.Tk):
         ttk.Label(frm, text="Select material to delete:").grid(row=0, column=0, sticky="w", pady=(0, 6))
         cb = ttk.Combobox(frm, values=removable, state="readonly", textvariable=material_var, width=28)
         cb.grid(row=1, column=0, columnspan=2, sticky="ew", pady=(0, 10))
-        ttk.Label(frm, text="Objekty using this material will be changed to vzduch.", foreground="#64748b").grid(row=2, column=0, columnspan=2, sticky="w", pady=(0, 12))
+        ttk.Label(frm, text="Objects using this material will be changed to air.", foreground="#64748b").grid(row=2, column=0, columnspan=2, sticky="w", pady=(0, 12))
 
         btns = ttk.Frame(frm)
         btns.grid(row=3, column=0, columnspan=2, sticky="e")
 
         def do_delete():
             name = material_var.get().strip().lower()
-            if not name or name == "vzduch" or name not in self.materials:
+            if not name or name == "air" or name not in self.materials:
                 return
-            used_count = sum(1 for obj in self.objekty if str(obj.get("material", "")).strip().lower() == name)
-            msg = f"Vymazať material '{name}'?"
+            used_count = sum(1 for obj in self.objects if str(obj.get("material", "")).strip().lower() == name)
+            msg = f"Delete material '{name}'?"
             if used_count:
-                msg += f"\n\n{used_count} objekt(s) use it and will be changed to vzduch."
-            if not messagebox.askyesno("Vymazať material", msg, parent=win):
+                msg += f"\n\n{used_count} object(s) use it and will be changed to air."
+            if not messagebox.askyesno("Delete material", msg, parent=win):
                 return
 
             self.materials.pop(name, None)
             self.material_colors.pop(name, None)
-            for obj in self.objekty:
+            for obj in self.objects:
                 if str(obj.get("material", "")).strip().lower() == name:
-                    obj["material"] = "vzduch"
+                    obj["material"] = "air"
 
             self._rebuild_table()
             self.preview_scene()
             self.save_scene()
-            self._log(f"[Materiál] Deleted material '{name}'\n")
+            self._log(f"[Material] Deleted material '{name}'\n")
             win.destroy()
 
         ttk.Button(btns, text="Cancel", command=win.destroy).pack(side="right", padx=(8, 0))
-        ttk.Button(btns, text="🗑 Vymazať material", style="Danger.TButton", command=do_delete).pack(side="right")
+        ttk.Button(btns, text="🗑 Delete material", style="Danger.TButton", command=do_delete).pack(side="right")
         win.bind("<Return>", lambda _e: do_delete())
         win.wait_window()
 
     def delete_object(self, idx_1based: int):
         """
-        Vymazať an objekt by index (1-based).
-        Удалить объект по номеру (начиная с 1).
+        Delete an object by index (1-based).
+        Delete an object by 1-based index.
         """
-        if idx_1based < 1 or idx_1based > len(self.objekty):
+        if idx_1based < 1 or idx_1based > len(self.objects):
             return
-        self.objekty.pop(idx_1based - 1)
-        self.n_var.set(len(self.objekty))
+        self.objects.pop(idx_1based - 1)
+        self.n_var.set(len(self.objects))
         self._rebuild_table()
         self.preview_scene()
 
     def fill_example(self):
         """
-        Fill scéna with example points (different materials).
-        Заполнить объекты примером (несколько точек разных материалов).
+        Fill scene with example points (different materials).
+        Fill the scene with example objects using different materials.
         """
         n = max(5, int(self.n_var.get()))
         self.n_var.set(n)
         self.apply_n()
 
         base = [
-            (0.7, 0.6, "betón", "circle", 0.10, 0.20, 0.20, 0.0),
-            (1.2, 1.3, "kov", "rectangle", 0.08, 0.22, 0.14, 0.0),
-            (1.8, 0.9, "sklo", "triangle", 0.08, 0.22, 0.20, 0.0),
-            (2.3, 1.6, "plast", "rectangle", 0.075, 0.18, 0.16, 30.0),
-            (2.7, 0.4, "voda", "circle", 0.09, 0.18, 0.18, 0.0),
+            (0.7, 0.6, "concrete", "circle", 0.10, 0.20, 0.20, 0.0),
+            (1.2, 1.3, "metal", "rectangle", 0.08, 0.22, 0.14, 0.0),
+            (1.8, 0.9, "glass", "triangle", 0.08, 0.22, 0.20, 0.0),
+            (2.3, 1.6, "plastic", "rectangle", 0.075, 0.18, 0.16, 30.0),
+            (2.7, 0.4, "water", "circle", 0.09, 0.18, 0.18, 0.0),
         ]
         for i in range(n):
             x, y, m, shape, r, ww, hh, ang = base[i % len(base)]
-            self.objekty[i].update({"x": x, "y": y, "material": m, "shape": shape, "r": r, "width": ww, "height": hh, "angle": ang})
+            self.objects[i].update({"x": x, "y": y, "material": m, "shape": shape, "r": r, "width": ww, "height": hh, "angle": ang})
 
         self._rebuild_table()
         self.preview_scene()
@@ -2144,12 +2144,12 @@ class App(tk.Tk):
 
     # ----------------------------
     # Coordinate transforms + Preview rendering
-    # Математика преобразования координат + отрисовка Preview
+    # Coordinate transforms and preview drawing
     # ----------------------------
     def _world_to_canvas(self, x: float, y: float) -> Tuple[float, float]:
         """
         Convert world coordinates (x,y) to canvas pixel coordinates (px,py).
-        Перевод координат мира (x,y) в координаты Canvas (px,py).
+        Convert world coordinates (x, y) to canvas coordinates (px, py).
         """
         w = self.preview.winfo_width() or 1
         h = self.preview.winfo_height() or 1
@@ -2161,7 +2161,7 @@ class App(tk.Tk):
     def _canvas_to_world(self, px: float, py: float) -> Tuple[float, float]:
         """
         Convert canvas pixel coordinates (px,py) back to world coordinates (x,y).
-        Перевод координат Canvas (px,py) обратно в координаты мира (x,y).
+        Convert canvas coordinates (px, py) back to world coordinates (x, y).
         """
         w = self.preview.winfo_width() or 1
         h = self.preview.winfo_height() or 1
@@ -2173,7 +2173,7 @@ class App(tk.Tk):
     def _snap(self, v: float) -> float:
         """
         Snap coordinate to nearest grid step (if enabled).
-        Если включен Snap — округлить координату к ближайшему шагу.
+        If snap is enabled, round coordinates to the nearest step.
         """
         if not self.snap_enabled.get():
             return v
@@ -2186,38 +2186,38 @@ class App(tk.Tk):
         return round(v / step) * step
 
     def _set_source_xy(self, x: float, y: float):
-        """Set wave zdroj position and sync GUI fields."""
+        """Set wave source position and sync GUI fields."""
         x = _clamp(float(x), WORLD["xmin"], WORLD["xmax"])
         y = _clamp(float(y), WORLD["ymin"], WORLD["ymax"])
-        self.zdroj["x0"] = float(x)
-        self.zdroj["y0"] = float(y)
+        self.source["x0"] = float(x)
+        self.source["y0"] = float(y)
         self.source_x_var.set(f"{x:.3f}")
         self.source_y_var.set(f"{y:.3f}")
 
     def apply_source_from_entries(self):
-        """Apply zdroj settings typed by user."""
-        x = _to_float(self.source_x_var.get(), float(self.zdroj.get("x0", DEFAULT_SOURCE["x0"])))
-        y = _to_float(self.source_y_var.get(), float(self.zdroj.get("y0", DEFAULT_SOURCE["y0"])))
+        """Apply source settings typed by user."""
+        x = _to_float(self.source_x_var.get(), float(self.source.get("x0", DEFAULT_SOURCE["x0"])))
+        y = _to_float(self.source_y_var.get(), float(self.source.get("y0", DEFAULT_SOURCE["y0"])))
         x = self._snap(x)
         y = self._snap(y)
         self._set_source_xy(x, y)
-        amp = _clamp(_to_float(self.source_amp_var.get(), float(self.zdroj.get("amplitude", DEFAULT_SOURCE["amplitude"]))), 0.01, 20.0)
-        radius = _clamp(_to_float(self.source_radius_var.get(), float(self.zdroj.get("radius", DEFAULT_SOURCE.get("radius", 0.08)))), 0.02, 0.30)
-        self.zdroj["amplitude"] = float(amp)
-        self.zdroj["radius"] = float(radius)
+        amp = _clamp(_to_float(self.source_amp_var.get(), float(self.source.get("amplitude", DEFAULT_SOURCE["amplitude"]))), 0.01, 20.0)
+        radius = _clamp(_to_float(self.source_radius_var.get(), float(self.source.get("radius", DEFAULT_SOURCE.get("radius", 0.08)))), 0.02, 0.30)
+        self.source["amplitude"] = float(amp)
+        self.source["radius"] = float(radius)
         self.source_amp_var.set(f"{amp:.3f}")
         self.source_radius_var.set(f"{radius:.3f}")
         self.preview_scene()
 
     def _sync_source_vars(self):
-        """Sync manual SOURCE settings window fields from current zdroj values."""
-        self.source_x_var.set(f"{float(self.zdroj.get('x0', DEFAULT_SOURCE['x0'])):.3f}")
-        self.source_y_var.set(f"{float(self.zdroj.get('y0', DEFAULT_SOURCE['y0'])):.3f}")
-        self.source_amp_var.set(f"{float(self.zdroj.get('amplitude', DEFAULT_SOURCE['amplitude'])):.3f}")
-        self.source_radius_var.set(f"{float(self.zdroj.get('radius', DEFAULT_SOURCE.get('radius', 0.08))):.3f}")
+        """Sync manual SOURCE settings window fields from current source values."""
+        self.source_x_var.set(f"{float(self.source.get('x0', DEFAULT_SOURCE['x0'])):.3f}")
+        self.source_y_var.set(f"{float(self.source.get('y0', DEFAULT_SOURCE['y0'])):.3f}")
+        self.source_amp_var.set(f"{float(self.source.get('amplitude', DEFAULT_SOURCE['amplitude'])):.3f}")
+        self.source_radius_var.set(f"{float(self.source.get('radius', DEFAULT_SOURCE.get('radius', 0.08))):.3f}")
 
     def open_source_settings_window(self):
-        """Otvoriť one separate window for all editor placement/zdroj settings."""
+        """Open one separate window for all editor placement/source settings."""
         if self.source_settings_win is not None and self.source_settings_win.winfo_exists():
             self.source_settings_win.lift()
             self.source_settings_win.focus_force()
@@ -2241,15 +2241,15 @@ class App(tk.Tk):
         # Move mode — moved here from the removed Placement toolbar.
         mode_box = ttk.LabelFrame(frm, text="Mouse edit mode")
         mode_box.grid(row=1, column=0, columnspan=4, sticky="ew", pady=(0, 10))
-        ttk.Radiobutton(mode_box, text="Move zdroj", value="zdroj", variable=self.place_mode_var).pack(side="left", padx=10, pady=8)
-        ttk.Radiobutton(mode_box, text="Move objekt", value="objekt", variable=self.place_mode_var).pack(side="left", padx=10, pady=8)
+        ttk.Radiobutton(mode_box, text="Move source", value="source", variable=self.place_mode_var).pack(side="left", padx=10, pady=8)
+        ttk.Radiobutton(mode_box, text="Move object", value="object", variable=self.place_mode_var).pack(side="left", padx=10, pady=8)
 
         obj_box = ttk.LabelFrame(frm, text="Object selection / Snap")
         obj_box.grid(row=2, column=0, columnspan=4, sticky="ew", pady=(0, 10))
         obj_box.columnconfigure(1, weight=1)
 
-        ttk.Label(obj_box, text="Selected objekt:").grid(row=0, column=0, sticky="w", padx=10, pady=8)
-        self.sel_spin = ttk.Spinbox(obj_box, from_=1, to=max(1, len(self.objekty)), textvariable=self.selected_obj_idx, width=8)
+        ttk.Label(obj_box, text="Selected object:").grid(row=0, column=0, sticky="w", padx=10, pady=8)
+        self.sel_spin = ttk.Spinbox(obj_box, from_=1, to=max(1, len(self.objects)), textvariable=self.selected_obj_idx, width=8)
         self.sel_spin.grid(row=0, column=1, sticky="w", padx=(0, 10), pady=8)
 
         ttk.Checkbutton(obj_box, text="Snap", variable=self.snap_enabled).grid(row=1, column=0, sticky="w", padx=10, pady=8)
@@ -2277,11 +2277,11 @@ class App(tk.Tk):
         btns.grid(row=4, column=0, columnspan=4, sticky="ew", pady=(4, 0))
         ttk.Button(btns, text="Apply", style="Primary.TButton", command=self.apply_source_from_entries).pack(side="left", padx=(0, 6))
         ttk.Button(btns, text="Reset SOURCE", command=self.reset_source_settings).pack(side="left", padx=(0, 6))
-        ttk.Button(btns, text="Zavrieť", command=win.destroy).pack(side="right")
+        ttk.Button(btns, text="Close", command=win.destroy).pack(side="right")
 
         ttk.Label(
             frm,
-            text="Move zdroj/objekt, selected objekt, snap, zdroj X/Y, Amp and Polomer are all here now.\nThe old Placement toolbar was removed.",
+            text="Move source/object, selected object, snap, source X/Y, Amp and Polomer are all here now.\nThe old Placement toolbar was removed.",
             foreground="#64748b",
             justify="left"
         ).grid(row=5, column=0, columnspan=4, sticky="w", pady=(14, 0))
@@ -2292,21 +2292,21 @@ class App(tk.Tk):
         """Small +/- changes from SOURCE settings window."""
         self.apply_source_from_entries()
         if key == "x0":
-            self._set_source_xy(float(self.zdroj.get("x0", DEFAULT_SOURCE["x0"])) + delta, float(self.zdroj.get("y0", DEFAULT_SOURCE["y0"])))
+            self._set_source_xy(float(self.source.get("x0", DEFAULT_SOURCE["x0"])) + delta, float(self.source.get("y0", DEFAULT_SOURCE["y0"])))
         elif key == "y0":
-            self._set_source_xy(float(self.zdroj.get("x0", DEFAULT_SOURCE["x0"])), float(self.zdroj.get("y0", DEFAULT_SOURCE["y0"])) + delta)
+            self._set_source_xy(float(self.source.get("x0", DEFAULT_SOURCE["x0"])), float(self.source.get("y0", DEFAULT_SOURCE["y0"])) + delta)
         elif key == "amplitude":
-            amp = _clamp(float(self.zdroj.get("amplitude", DEFAULT_SOURCE["amplitude"])) + delta, 0.01, 20.0)
-            self.zdroj["amplitude"] = amp
+            amp = _clamp(float(self.source.get("amplitude", DEFAULT_SOURCE["amplitude"])) + delta, 0.01, 20.0)
+            self.source["amplitude"] = amp
         elif key == "radius":
-            radius = _clamp(float(self.zdroj.get("radius", DEFAULT_SOURCE.get("radius", 0.08))) + delta, 0.02, 0.30)
-            self.zdroj["radius"] = radius
+            radius = _clamp(float(self.source.get("radius", DEFAULT_SOURCE.get("radius", 0.08))) + delta, 0.02, 0.30)
+            self.source["radius"] = radius
         self._sync_source_vars()
         self.preview_scene()
 
     def reset_source_settings(self):
         """Reset only SOURCE settings to defaults."""
-        self.zdroj.update(DEFAULT_SOURCE)
+        self.source.update(DEFAULT_SOURCE)
         self._sync_source_vars()
         self.preview_scene()
 
@@ -2352,18 +2352,18 @@ class App(tk.Tk):
         self.preview.create_rectangle(x-r, y-r, x+r, y+r, fill=fill, outline="#0f172a", width=1, tags=(tag,))
 
     def _selected_index(self):
-        if not self.objekty:
+        if not self.objects:
             return -1
-        return max(1, min(len(self.objekty), int(self.selected_obj_idx.get()))) - 1
+        return max(1, min(len(self.objects), int(self.selected_obj_idx.get()))) - 1
 
     def _find_object_at_canvas(self, x, y):
-        """Pick topmost objekt by approximate rotated bounding kruh/box."""
-        for i in range(len(self.objekty)-1, -1, -1):
-            obj = self.objekty[i]
+        """Pick topmost object by approximate rotated bounding circle/box."""
+        for i in range(len(self.objects)-1, -1, -1):
+            obj = self.objects[i]
             px, py, cw, ch = self._obj_canvas_box(obj)
             angle = math.radians(float(obj.get("angle", 0.0)))
             dx, dy = x - px, y - py
-            # rotate cursor into objekt-local coordinates
+            # rotate cursor into object-local coordinates
             ca, sa = math.cos(-angle), math.sin(-angle)
             lx = dx * ca - dy * sa
             ly = dx * sa + dy * ca
@@ -2399,29 +2399,29 @@ class App(tk.Tk):
         if hit:
             name, data = hit
             kind = data[2]
-            if kind.startswith(("source", "zdroj")):
-                sx = float(self.zdroj.get("x0", DEFAULT_SOURCE["x0"]))
-                sy = float(self.zdroj.get("y0", DEFAULT_SOURCE["y0"]))
+            if kind.startswith(("source", "source")):
+                sx = float(self.source.get("x0", DEFAULT_SOURCE["x0"]))
+                sy = float(self.source.get("y0", DEFAULT_SOURCE["y0"]))
                 spx, spy = self._world_to_canvas(sx, sy)
                 self._drag_state = {"kind": kind, "start_px": evt.x, "start_py": evt.y, "source_px": spx, "source_py": spy,
-                                    "start_amp": float(self.zdroj.get("amplitude", DEFAULT_SOURCE["amplitude"])),
-                                    "start_radius": float(self.zdroj.get("radius", DEFAULT_SOURCE.get("radius", 0.08)))}
+                                    "start_amp": float(self.source.get("amplitude", DEFAULT_SOURCE["amplitude"])),
+                                    "start_radius": float(self.source.get("radius", DEFAULT_SOURCE.get("radius", 0.08)))}
                 return
             if sel >= 0:
-                obj = self.objekty[sel]
+                obj = self.objects[sel]
                 px, py, cw, ch = self._obj_canvas_box(obj)
                 self._drag_state = {"kind": kind, "idx": sel, "start_px": evt.x, "start_py": evt.y, "cx": px, "cy": py,
                                     "start_obj": dict(obj), "start_dist": max(1.0, math.hypot(evt.x - px, evt.y - py))}
                 return
 
         # Source center pick
-        sx = float(self.zdroj.get("x0", DEFAULT_SOURCE["x0"]))
-        sy = float(self.zdroj.get("y0", DEFAULT_SOURCE["y0"]))
+        sx = float(self.source.get("x0", DEFAULT_SOURCE["x0"]))
+        sy = float(self.source.get("y0", DEFAULT_SOURCE["y0"]))
         spx, spy = self._world_to_canvas(sx, sy)
-        source_radius = float(self.zdroj.get("radius", DEFAULT_SOURCE.get("radius", 0.08)))
+        source_radius = float(self.source.get("radius", DEFAULT_SOURCE.get("radius", 0.08)))
         sr_w, _ = self._world_size_to_canvas(source_radius * 2.0, source_radius * 2.0)
         if math.hypot(evt.x - spx, evt.y - spy) <= max(18.0, sr_w / 2.0 + 8.0):
-            self.place_mode_var.set("zdroj")
+            self.place_mode_var.set("source")
             self._drag_state = {"kind": "source_move", "start_px": evt.x, "start_py": evt.y}
             self.preview_scene()
             return
@@ -2429,9 +2429,9 @@ class App(tk.Tk):
         # Object pick
         idx = self._find_object_at_canvas(evt.x, evt.y)
         if idx >= 0:
-            self.place_mode_var.set("objekt")
+            self.place_mode_var.set("object")
             self.selected_obj_idx.set(idx + 1)
-            obj = self.objekty[idx]
+            obj = self.objects[idx]
             self._drag_state = {"kind": "move", "idx": idx, "start_px": evt.x, "start_py": evt.y, "start_obj": dict(obj)}
             self.preview_scene()
             return
@@ -2439,14 +2439,14 @@ class App(tk.Tk):
         # Empty area: keep old behavior depending on current mode
         x, y = self._canvas_to_world(evt.x, evt.y)
         x, y = self._snap(x), self._snap(y)
-        if self.place_mode_var.get() == "zdroj":
+        if self.place_mode_var.get() == "source":
             self._set_source_xy(x, y)
             self._drag_state = {"kind": "source_move", "start_px": evt.x, "start_py": evt.y}
-        elif self.objekty:
+        elif self.objects:
             idx = self._selected_index()
-            self.objekty[idx]["x"] = float(x)
-            self.objekty[idx]["y"] = float(y)
-            self._drag_state = {"kind": "move", "idx": idx, "start_px": evt.x, "start_py": evt.y, "start_obj": dict(self.objekty[idx])}
+            self.objects[idx]["x"] = float(x)
+            self.objects[idx]["y"] = float(y)
+            self._drag_state = {"kind": "move", "idx": idx, "start_px": evt.x, "start_py": evt.y, "start_obj": dict(self.objects[idx])}
         self.preview_scene()
 
     def _on_preview_drag(self, evt):
@@ -2459,14 +2459,14 @@ class App(tk.Tk):
         if kind == "source_move":
             x, y = self._canvas_to_world(evt.x, evt.y)
             self._set_source_xy(self._snap(x), self._snap(y))
-            self.status_var.set(f"Source: X={float(self.zdroj['x0']):.3f}, Y={float(self.zdroj['y0']):.3f}")
+            self.status_var.set(f"Source: X={float(self.source['x0']):.3f}, Y={float(self.source['y0']):.3f}")
             self.preview_scene()
             return
 
         if kind == "source_amp":
             dist = math.hypot(evt.x - st["source_px"], evt.y - st["source_py"])
             amp = _clamp(dist / 45.0, 0.10, 5.0)
-            self.zdroj["amplitude"] = float(amp)
+            self.source["amplitude"] = float(amp)
             self.source_amp_var.set(f"{amp:.3f}")
             self.status_var.set(f"Source amplitude: {amp}")
             self.preview_scene()
@@ -2474,21 +2474,21 @@ class App(tk.Tk):
 
         if kind == "source_size":
             dist = math.hypot(evt.x - st["source_px"], evt.y - st["source_py"])
-            # Convert handle distance on canvas to a zdroj radius in world units.
-            # This changes how big the SOURCE marker/center looks on Preview and saved scéna.yaml.
+            # Convert handle distance on canvas to a source radius in world units.
+            # This changes how big the SOURCE marker/center looks on Preview and saved scene.yaml.
             radius_px = _clamp(dist - 18.0, 5.0, 160.0)
             rx_world, _ = self._canvas_to_world_size(radius_px * 2.0, radius_px * 2.0)
             radius = _clamp(rx_world / 2.0, 0.02, 0.30)
-            self.zdroj["radius"] = float(radius)
+            self.source["radius"] = float(radius)
             self.source_radius_var.set(f"{radius:.3f}")
             self.status_var.set(f"Source size: {radius:.3f}")
             self.preview_scene()
             return
 
         idx = int(st.get("idx", -1))
-        if idx < 0 or idx >= len(self.objekty):
+        if idx < 0 or idx >= len(self.objects):
             return
-        obj = self.objekty[idx]
+        obj = self.objects[idx]
         start = st.get("start_obj", dict(obj))
 
         if kind == "move":
@@ -2531,7 +2531,7 @@ class App(tk.Tk):
     def preview_scene(self):
         """
         Fully redraw the Preview canvas.
-        Полная перерисовка холста Preview.
+        Redraw the full preview canvas.
         """
         self.preview.delete("all")
         self._preview_handles = {}
@@ -2539,7 +2539,7 @@ class App(tk.Tk):
         h = self.preview.winfo_height() or 1
 
         # Draw background grid (visual aid only)
-        # Рисуем сетку (только для визуального удобства)
+        # Draw the visual grid
         for i in range(1, 6):
             x = i * w / 6
             self.preview.create_line(x, 0, x, h, fill="#111827")
@@ -2547,13 +2547,13 @@ class App(tk.Tk):
             y = i * h / 4
             self.preview.create_line(0, y, w, y, fill="#111827")
 
-        # Draw wave zdroj marker.
-        # Рисуем маркер источника волн.
-        sx = float(self.zdroj.get("x0", DEFAULT_SOURCE["x0"]))
-        sy = float(self.zdroj.get("y0", DEFAULT_SOURCE["y0"]))
+        # Draw wave source marker.
+        # Draw the wave source marker
+        sx = float(self.source.get("x0", DEFAULT_SOURCE["x0"]))
+        sy = float(self.source.get("y0", DEFAULT_SOURCE["y0"]))
         spx, spy = self._world_to_canvas(sx, sy)
-        active_source = self.place_mode_var.get() == "zdroj"
-        source_radius = float(self.zdroj.get("radius", DEFAULT_SOURCE.get("radius", 0.08)))
+        active_source = self.place_mode_var.get() == "source"
+        source_radius = float(self.source.get("radius", DEFAULT_SOURCE.get("radius", 0.08)))
         sr_w, _ = self._world_size_to_canvas(source_radius * 2.0, source_radius * 2.0)
         sr = max(8.0, sr_w / 2.0)
         if active_source:
@@ -2565,15 +2565,15 @@ class App(tk.Tk):
         self.preview.create_line(spx, spy - cross, spx, spy + cross, fill="#ffffff", width=2)
         self.preview.create_text(spx + sr + 8, spy - sr - 6, text="SOURCE", fill="#fed7aa", anchor="w", font=("Segoe UI", 9, "bold"))
 
-        # Source size handle: drag purple kruh above SOURCE to make it bigger/smaller.
+        # Source size handle: drag purple circle above SOURCE to make it bigger/smaller.
         shx, shy = spx, spy - sr - 22
         self.preview.create_line(spx, spy - sr, shx, shy, fill="#c084fc", dash=(3, 3), width=1)
         self.preview.create_oval(shx - 7, shy - 7, shx + 7, shy + 7, fill="#a855f7", outline="white", width=2)
         self._preview_handles["source_size"] = (shx, shy, "source_size")
         self.preview.create_text(shx + 10, shy, text="size", fill="#e9d5ff", anchor="w", font=("Segoe UI", 8, "bold"))
 
-        # Source amplitude handle: drag the small green štvorec to increase/decrease wave power.
-        amp = float(self.zdroj.get("amplitude", DEFAULT_SOURCE["amplitude"]))
+        # Source amplitude handle: drag the small green square to increase/decrease wave power.
+        amp = float(self.source.get("amplitude", DEFAULT_SOURCE["amplitude"]))
         amp_r = max(sr + 14.0, 22 + amp * 14)
         self.preview.create_oval(spx - amp_r, spy - amp_r, spx + amp_r, spy + amp_r, outline="#fb923c", dash=(4, 3), width=1)
         ahx, ahy = spx + amp_r, spy
@@ -2581,16 +2581,16 @@ class App(tk.Tk):
         self._draw_handle(ahx, ahy, "source_amp", fill="#22c55e")
         self.preview.create_text(ahx + 8, ahy, text=f"amp {amp:.1f}", fill="#fed7aa", anchor="w", font=("Segoe UI", 8, "bold"))
 
-        # Determine selected objekt index
-        # Индекс выбранного объекта
+        # Determine selected object index
+        # Selected object index
         sel = -1
-        if self.objekty:
-            sel = max(1, min(len(self.objekty), int(self.selected_obj_idx.get()))) - 1
+        if self.objects:
+            sel = max(1, min(len(self.objects), int(self.selected_obj_idx.get()))) - 1
 
-        # Draw all objekty with real shapes and sizes
-        # Рисуем объекты с формами и размерами
-        for i, obj in enumerate(self.objekty):
-            col = self.material_colors.get(obj.get("material", "betón"), self.materials.get(obj.get("material", "betón"), {}).get("color", "#22c55e"))
+        # Draw all objects with real shapes and sizes
+        # Draw objects with shapes and dimensions
+        for i, obj in enumerate(self.objects):
+            col = self.material_colors.get(obj.get("material", "concrete"), self.materials.get(obj.get("material", "concrete"), {}).get("color", "#22c55e"))
             px, py = self._world_to_canvas(float(obj["x"]), float(obj["y"]))
             shape = str(obj.get("shape", "circle")).lower()
             angle = float(obj.get("angle", 0.0))
@@ -2613,8 +2613,8 @@ class App(tk.Tk):
                 self.preview.create_oval(px - r, py - r, px + r, py + r, fill=col, outline=outline, width=width_line)
 
             if i == sel:
-                # Photoshop-style transform controls for selected objekt.
-                # Белая рамка: перетаскивай центр = move, угол = resize, верхний кружок = rotate.
+                # Photoshop-style transform controls for selected object.
+                # White selection frame: drag center to move, corner to resize, top handle to rotate.
                 _, _, bw, bh = self._obj_canvas_box(obj)
                 angle_draw = -float(obj.get("angle", 0.0))
                 corners = [(-bw/2, -bh/2), (bw/2, -bh/2), (bw/2, bh/2), (-bw/2, bh/2)]
@@ -2624,7 +2624,7 @@ class App(tk.Tk):
                 for n, (hx, hy) in enumerate(corner_pts):
                     self._preview_handles[f"obj_resize_{n}"] = (hx, hy, "resize")
                     self._draw_handle(hx, hy, f"obj_resize_{n}", fill="#ffffff")
-                # rotate handle above the objekt
+                # rotate handle above the object
                 top_mid = self._rotated_points_canvas(px, py, [(0, -bh/2 - 30)], angle_draw)
                 rhx, rhy = top_mid[0], top_mid[1]
                 self.preview.create_line(px, py, rhx, rhy, fill="#ffffff", dash=(3, 3))
@@ -2636,7 +2636,7 @@ class App(tk.Tk):
     def _on_mouse_move(self, evt):
         """
         Show world coordinates under mouse cursor.
-        При движении мыши по Preview показываем координаты мира.
+        Show world coordinates while moving the mouse over the preview.
         """
         x, y = self._canvas_to_world(evt.x, evt.y)
         self.cursor_var.set(f"X: {x:.3f}, Y: {y:.3f}")
@@ -2644,58 +2644,57 @@ class App(tk.Tk):
     def _on_preview_click(self, evt):
         """
         Move selected point to click position (with snap if enabled).
-        Клик по Preview: перемещаем выбранную точку в место клика (с учетом Snap).
+        Clicking the preview moves the selected item to the clicked location, respecting snap.
         """
         x, y = self._canvas_to_world(evt.x, evt.y)
         x = self._snap(x)
         y = self._snap(y)
 
-        if self.place_mode_var.get() == "zdroj":
+        if self.place_mode_var.get() == "source":
             self._set_source_xy(x, y)
             self.status_var.set(f"Source: X={x:.3f}, Y={y:.3f}")
             self.preview_scene()
             return
 
-        if not self.objekty:
+        if not self.objects:
             return
 
-        sel = max(1, min(len(self.objekty), int(self.selected_obj_idx.get()))) - 1
-        self.objekty[sel]["x"] = float(x)
-        self.objekty[sel]["y"] = float(y)
+        sel = max(1, min(len(self.objects), int(self.selected_obj_idx.get()))) - 1
+        self.objects[sel]["x"] = float(x)
+        self.objects[sel]["y"] = float(y)
 
         # Quick way to refresh table values: rebuild table from scratch
-        # Быстро обновить X/Y в таблице: пересобрать таблицу целиком
+        # Refresh table coordinates by rebuilding the table.
         self._rebuild_table()
         self.preview_scene()
 
     # ----------------------------
     # YAML saving
-    # Сохранение YAML
+    # YAML export
     # ----------------------------
     def build_scene_dict(self) -> dict:
         """
-        Build data structure for scéna.yaml.
-        Собрать структуру данных для scéna.yaml.
+        Build the data structure for scene.yaml.
         """
         freq_ghz = _to_float(self.freq_ghz_var.get(), 1.0)
 
-        # Copy zdroj position from GUI and set frequency in Hz
-        # Берём позицию источника из GUI и задаём частоту в Гц
+        # Copy source position from GUI and set frequency in Hz
+        # Read source position from the GUI and store the frequency in Hz
         self.apply_source_from_entries()
-        src = dict(getattr(self, "zdroj", DEFAULT_SOURCE))
+        src = dict(getattr(self, "source", DEFAULT_SOURCE))
         src["frequency_hz"] = float(freq_ghz) * 1e9
 
-        # Serialize objekty list
-        # Сериализуем список объектов
+        # Serialize objects list
+        # Serialize the object list
         objs = []
-        for o in self.objekty:
+        for o in self.objects:
             shape = str(o.get("shape", "circle")).strip().lower()
             if shape not in SHAPES:
                 shape = "circle"
             objs.append({
                 "x": float(o["x"]),
                 "y": float(o["y"]),
-                "material": str(o.get("material", "betón")).strip().lower(),
+                "material": str(o.get("material", "concrete")).strip().lower(),
                 "shape": shape,
                 "r": float(o.get("r", DEFAULT_OBJECT["r"])),
                 "width": float(o.get("width", DEFAULT_OBJECT["width"])),
@@ -2705,35 +2704,34 @@ class App(tk.Tk):
 
         return {
             "materials": self.materials,
-            "scéna": {
-                "zdroj": src,
-                "objekty": objs,
+            "scene": {
+                "source": src,
+                "objects": objs,
             }
         }
 
     def save_scene(self):
         """
-        Write scéna.yaml to disk.
-        Записать scéna.yaml.
+        Write scene.yaml to disk.
         """
         try:
             data = self.build_scene_dict()
             with open(self.scene_path, "w", encoding="utf-8") as f:
                 yaml.safe_dump(data, f, sort_keys=False, allow_unicode=True)
 
-            self._log(f"[Uložiť] Wrote {self.scene_path}\n")
-            self.path_var.set(f"scéna.yaml: {self.scene_path}")
+            self._log(f"[Save] Wrote {self.scene_path}\n")
+            self.path_var.set(f"scene.yaml: {self.scene_path}")
         except Exception as e:
             messagebox.showerror("Cannot save", str(e))
 
     # ----------------------------
     # Run solver in background thread
-    # Запуск solver в отдельном потоке
+    # Run solver in a worker thread
     # ----------------------------
     def run_solver(self):
         """
         Run solver_simple_torch.py and parse stdout for progress updates.
-        Запуск solver_simple_torch.py и чтение stdout для прогресса.
+        Run solver_simple_torch.py and read stdout for progress.
         """
         if self.running:
             return
@@ -2744,7 +2742,7 @@ class App(tk.Tk):
         self.save_scene()
 
         # Clamp epochs and round down to hundreds
-        # Ограничиваем epochs и округляем вниз до сотен
+        # Clamp epochs and round down to hundreds
         epochs = int(self.epochs_var.get())
         epochs = max(100, min(20000, epochs))
         epochs = (epochs // 100) * 100
@@ -2762,7 +2760,7 @@ class App(tk.Tk):
         self._log(f"[Run] {' '.join(cmd)}\n")
 
         # Update UI state for running process
-        # Обновляем UI состояние на время выполнения
+        # Update UI state during execution
         self.running = True
         self.status_var.set("Running...")
         self.progress_var.set(0.0)
@@ -2774,7 +2772,7 @@ class App(tk.Tk):
         def worker():
             """
             Worker thread: start process and read stdout line by line.
-            Поток-воркер: запускаем процесс и читаем stdout построчно.
+            Worker thread: start the process and read stdout line by line.
             """
             try:
                 proc = subprocess.Popen(
@@ -2798,7 +2796,7 @@ class App(tk.Tk):
         threading.Thread(target=worker, daemon=True).start()
 
         # Start polling queue events in UI thread
-        # Запускаем периодический опрос очереди в UI потоке
+        # Start periodic queue polling in the UI thread
         if not self._polling:
             self._polling = True
             self.after(80, self._poll_queue)
@@ -2806,7 +2804,7 @@ class App(tk.Tk):
     def _poll_queue(self):
         """
         UI timer: drain queue events and update UI.
-        UI-таймер: забирает события из очереди и обновляет интерфейс.
+        UI timer: consume queue events and update the interface.
         """
         try:
             while True:
@@ -2826,7 +2824,7 @@ class App(tk.Tk):
                     self.btn_run.configure(state="normal")
                     self.progress_var.set(100.0)
                     self.progress_txt.set("100%")
-                    self.status_var.set("Pripravené")
+                    self.status_var.set("Ready")
                     self._log(f"[Cinematic] Saved {payload}\n")
                     self.load_live_video(auto_play=True)
                 elif kind == "cinematic_error":
@@ -2846,12 +2844,12 @@ class App(tk.Tk):
     def _handle_solver_line(self, line: str):
         """
         Parse solver log line: progress and results directory path.
-        Парсим строки лога solver: прогресс и путь к результатам.
+        Parse solver log lines for progress and result path.
         """
         self._log(line)
 
         # Progress parsing: expected format like "Epoch 100 / 2000"
-        # Прогресс: ищем строку вида "Epoch 100 / 2000"
+        # Progress parser for lines such as "Epoch 100 / 2000"
         m = re.search(r"Epoch\s+(\d+)\s*/\s*(\d+)", line)
         if m:
             e = int(m.group(1))
@@ -2862,7 +2860,7 @@ class App(tk.Tk):
             self._last_training_progress = pct
 
         # Results folder detection: expected format "Saved results: <path>"
-        # Папка результатов: ищем строку "Saved results: <path>"
+        # Result-directory parser for lines such as "Saved results: <path>"
         m2 = re.search(r"Saved results:\s*(.+)", line)
         if m2:
             p = m2.group(1).strip()
@@ -2878,11 +2876,11 @@ class App(tk.Tk):
     def _on_solver_done(self, rc: int):
         """
         Called when solver exits; restore UI state.
-        Когда solver завершился — вернуть UI в нормальное состояние.
+        Restore the UI after the solver finishes.
         """
         self.running = False
         self.btn_run.configure(state="normal")
-        self.status_var.set("Pripravené" if rc == 0 else f"Error (code {rc})")
+        self.status_var.set("Ready" if rc == 0 else f"Error (code {rc})")
         if rc == 0:
             self.progress_var.set(100.0)
             self.progress_txt.set("100%")
@@ -2906,8 +2904,8 @@ class App(tk.Tk):
 
     def open_results(self):
         """
-        Otvoriť results directory.
-        Открыть папку результатов.
+        Open results directory.
+        Open the results folder.
         """
         if not self.last_results_dir:
             return
@@ -2918,8 +2916,8 @@ class App(tk.Tk):
 
     def _open_path_default(self, path: Path):
         """
-        Otvoriť folder with OS file explorer.
-        Открыть папку средствами ОС.
+        Open folder with OS file explorer.
+        Open a folder with the OS file explorer.
         """
         try:
             if sys.platform.startswith("win"):
@@ -2927,12 +2925,12 @@ class App(tk.Tk):
                 return
             subprocess.Popen(["xdg-open", str(path.resolve())])
         except Exception as e:
-            messagebox.showwarning("Nie je možné otvoriť folder", str(e))
+            messagebox.showwarning("Cannot open folder", str(e))
 
 
     # ----------------------------
     # Live Video tab: in-app GIF preview
-    # Отдельная вкладка видео: просмотр GIF внутри GUI
+    # Video tab for previewing GIF output inside the GUI
     # ----------------------------
 
 
@@ -2940,8 +2938,8 @@ class App(tk.Tk):
         """Human-readable label for the current cinematic direction."""
         mode = _normalize_wave_direction(self.wave_direction_var.get() if hasattr(self, "wave_direction_var") else "center_to_objects")
         if mode == "object_to_center":
-            return "objekt → center"
-        return "center → objekty"
+            return "object → center"
+        return "center → objects"
 
     def _refresh_wave_direction_button(self):
         """Update direction toggle button text."""
@@ -2960,17 +2958,17 @@ class App(tk.Tk):
         self.render_cinematic_video(auto_play=True)
 
     def _scene_data_for_cinematic_renderer(self) -> dict:
-        """Build full scéna dict for the embedded cinematic renderer."""
+        """Build full scene dict for the embedded cinematic renderer."""
         try:
             data = self.build_scene_dict()
         except Exception:
-            data = {"materials": self.materials, "scéna": {"zdroj": getattr(self, "zdroj", DEFAULT_SOURCE), "objekty": self.objekty}}
-        data.setdefault("scéna", {})
-        data["scéna"].setdefault("world", dict(WORLD))
-        data["scéna"].setdefault("zdroj", dict(getattr(self, "zdroj", DEFAULT_SOURCE)))
-        data["scéna"]["objekty"] = list(getattr(self, "objekty", []) or [])
+            data = {"materials": self.materials, "scene": {"source": getattr(self, "source", DEFAULT_SOURCE), "objects": self.objects}}
+        data.setdefault("scene", {})
+        data["scene"].setdefault("world", dict(WORLD))
+        data["scene"].setdefault("source", dict(getattr(self, "source", DEFAULT_SOURCE)))
+        data["scene"]["objects"] = list(getattr(self, "objects", []) or [])
         data.setdefault("materials", getattr(self, "materials", DEFAULT_MATERIALS))
-        data["scéna"]["wave_direction"] = _normalize_wave_direction(
+        data["scene"]["wave_direction"] = _normalize_wave_direction(
             self.wave_direction_var.get() if hasattr(self, "wave_direction_var") else "center_to_objects"
         )
         return data
@@ -3003,7 +3001,7 @@ class App(tk.Tk):
     def render_cinematic_video(self, auto_play: bool = True):
         """
         Create a beautiful wave_animation.gif in the current results folder.
-        Создаёт красивый wave_animation.gif в текущей папке результатов.
+        Create wave_animation.gif in the current results folder.
         """
         if self.running:
             return
@@ -3026,7 +3024,7 @@ class App(tk.Tk):
         self.btn_open.configure(state="normal")
 
         scene_data = self._scene_data_for_cinematic_renderer()
-        wave_direction = _normalize_wave_direction(scene_data.get("scéna", {}).get("wave_direction", "center_to_objects"))
+        wave_direction = _normalize_wave_direction(scene_data.get("scene", {}).get("wave_direction", "center_to_objects"))
         self._refresh_wave_direction_button()
         out_dir = Path(self.last_results_dir)
         frames = 96
@@ -3054,7 +3052,7 @@ class App(tk.Tk):
                     pct = 100.0 * (frames + i) / max(1, total_render_frames)
                     self._q.put(("cinematic_progress", f"{pct}|{path}"))
                 # Render both direction GIFs, plus keep wave_animation.gif as the selected preview.
-                # Рендерим две отдельные GIF по направлениям, а wave_animation.gif оставляем как текущий preview.
+                # Render direction-specific GIFs and keep wave_animation.gif as the current preview.
                 selected_name = "wave_animation_center_to_objects.gif" if wave_direction == "center_to_objects" else "wave_animation_object_to_center.gif"
                 other_direction = "object_to_center" if wave_direction == "center_to_objects" else "center_to_objects"
                 other_name = "wave_animation_object_to_center.gif" if other_direction == "object_to_center" else "wave_animation_center_to_objects.gif"
@@ -3109,10 +3107,10 @@ class App(tk.Tk):
         try:
             scene_data = {
                 "materials": getattr(self, "materials", DEFAULT_MATERIALS),
-                "scéna": {
+                "scene": {
                     "world": WORLD,
-                    "zdroj": getattr(self, "zdroj", DEFAULT_SOURCE),
-                    "objekty": getattr(self, "objekty", []) or [],
+                    "source": getattr(self, "source", DEFAULT_SOURCE),
+                    "objects": getattr(self, "objects", []) or [],
                 },
             }
             return _draw_material_overlay_pil(frame.convert("RGBA"), scene_data)
@@ -3120,7 +3118,7 @@ class App(tk.Tk):
             return frame
 
     def load_live_video(self, auto_play: bool = False):
-        """Načítať wave_animation.gif frames into memory for smooth in-app playback."""
+        """Load wave_animation.gif frames into memory for smooth in-app playback."""
         if not PIL_OK or self.live_video_label is None:
             return
 
@@ -3142,7 +3140,7 @@ class App(tk.Tk):
         if video_path.suffix.lower() != ".gif":
             self.live_video_label.configure(
                 image="",
-                text=f"Video found: {video_path.name}\nUse Otvoriť video folder for MP4 files."
+                text=f"Video found: {video_path.name}\nUse Open video folder for MP4 files."
             )
             if self.live_video_status:
                 self.live_video_status.configure(text=f"Found {video_path.name}. In-app preview supports GIF.")
@@ -3150,7 +3148,7 @@ class App(tk.Tk):
 
         try:
             im = Image.open(video_path)
-            # Fullscreen preview: upscale GIF frames and draw scéna objekty on top.
+            # Fullscreen preview: upscale GIF frames and draw scene objects on top.
             max_w = max(1200, self.winfo_width() - 90)
             max_h = max(700, self.winfo_height() - 250)
             frames = []
@@ -3175,7 +3173,7 @@ class App(tk.Tk):
             self.live_video_label.configure(image=self.live_frames[0], text="")
             if self.live_video_status:
                 self.live_video_status.configure(
-                    text=f"Loaded fullscreen preview • {video_path.name} • {len(self.live_frames)} frames • objekt overlay ON"
+                    text=f"Loaded fullscreen preview • {video_path.name} • {len(self.live_frames)} frames • object overlay ON"
                 )
             if auto_play:
                 self.play_live_video()
@@ -3235,11 +3233,11 @@ class App(tk.Tk):
 
     # ----------------------------
     # Results tab: show 3 images (Pred/True/Err)
-    # Results: показываем 3 картинки в ряд (Pred/True/Err)
+    # Results tab: show predicted/reference/error images side by side
     # ----------------------------
     def _load_results_images(self):
         """
-        Načítať field_pred.png / field_true.png / field_err.png into Results tab
+        Load field_pred.png / field_true.png / field_err.png into Results tab
         using a clean 2-row layout:
           row 1: Pred + True
           row 2: Error centered/full width
@@ -3295,8 +3293,8 @@ class App(tk.Tk):
 
                 btns = ttk.Frame(card)
                 btns.grid(row=1, column=0, pady=(0, 10))
-                ttk.Button(btns, text="Otvoriť image", command=lambda p=path: _open_file_default(p)).pack(side="left", padx=4)
-                ttk.Button(btns, text="Otvoriť folder", command=lambda p=path.parent: open_folder_default(p)).pack(side="left", padx=4)
+                ttk.Button(btns, text="Open image", command=lambda p=path: _open_file_default(p)).pack(side="left", padx=4)
+                ttk.Button(btns, text="Open folder", command=lambda p=path.parent: open_folder_default(p)).pack(side="left", padx=4)
 
             except Exception as e:
                 ttk.Label(card, text=f"Cannot load: {e}").grid(row=0, column=0, sticky="w", padx=12, pady=12)
@@ -3314,7 +3312,7 @@ class App(tk.Tk):
     def _safe_folder_name(self, name: str) -> str:
         """Make a safe folder name from user text."""
         name = (name or "").strip()
-        name = re.sub(r"[^A-Za-zА-Яа-я0-9_. -]+", "_", name)
+        name = re.sub(r"[^A-Za-z0-9_. -]+", "_", name)
         name = name.strip(" ._")
         return name[:80]
 
@@ -3354,7 +3352,7 @@ class App(tk.Tk):
         if not path:
             messagebox.showinfo(
                 "AI Analysis",
-                "Сначала запусти solver или открой/создай generation folder с результатами."
+                "Run the solver first, or open/create a generation folder with results."
             )
             return None
         return path
@@ -3365,7 +3363,7 @@ class App(tk.Tk):
             open_path_default(path)
 
     def _write_ai_report_files(self, folder: Path, report: str):
-        """Uložiť AI report as TXT and Markdown into generation/results folder."""
+        """Save AI report as TXT and Markdown into generation/results folder."""
         folder = Path(folder)
         folder.mkdir(parents=True, exist_ok=True)
 
@@ -3387,7 +3385,7 @@ class App(tk.Tk):
         return path.parent if path else None
 
     def _load_numeric_field(self, name: str):
-        """Načítať a field array from .npy if available, otherwise estimate from PNG grayscale."""
+        """Load a field array from .npy if available, otherwise estimate from PNG grayscale."""
         folder = self._analysis_output_folder()
         if not folder:
             return None
@@ -3434,7 +3432,7 @@ class App(tk.Tk):
             return None, None, None
 
     def _save_simple_plot(self, fig, path: Path):
-        """Uložiť matplotlib figure safely."""
+        """Save matplotlib figure safely."""
         fig.tight_layout()
         fig.savefig(path, dpi=170, bbox_inches="tight")
         try:
@@ -3448,7 +3446,7 @@ class App(tk.Tk):
         folder = self._analysis_output_folder()
         if not folder:
             if not silent:
-                messagebox.showinfo("AI Graphs", "Сначала запусти solver, чтобы появилась папка генерации.")
+                messagebox.showinfo("AI Graphs", "Run the solver first to create a generation folder.")
             return
         folder = Path(folder)
         folder.mkdir(parents=True, exist_ok=True)
@@ -3461,21 +3459,21 @@ class App(tk.Tk):
             from mpl_toolkits.mplot3d import Axes3D  # noqa: F401
         except Exception as e:
             if not silent:
-                messagebox.showerror("AI Graphs", f"Нужны numpy/matplotlib для графиков:\n{e}")
+                messagebox.showerror("AI Graphs", f"NumPy/matplotlib are required for plots:\n{e}")
             return
 
         pred, true, err = self._scene_arrays_for_visuals()
         if pred is None:
             if not silent:
-                messagebox.showwarning("AI Graphs", "Не удалось найти или создать поле для анализа.")
+                messagebox.showwarning("AI Graphs", "Could not find or create a field for analysis.")
             return
 
-        objekty = list(getattr(self, "objekty", []) or [])
+        objects = list(getattr(self, "objects", []) or [])
         materials = dict(getattr(self, "materials", {}) or DEFAULT_MATERIALS)
         freq = _to_float(self.freq_ghz_var.get(), 1.0)
         epochs = max(100, int(self.epochs_var.get() or 100))
         steps = np.arange(0, epochs + 1, max(1, epochs // 80))
-        complexity = max(1, len(objekty))
+        complexity = max(1, len(objects))
         loss = (1.0 / (1.0 + steps / max(100, epochs * 0.22))) + 0.015 * np.sin(steps / max(1, epochs) * 8*np.pi)
         loss = np.maximum(loss * (1.0 + complexity * 0.035), 0.002)
 
@@ -3490,7 +3488,7 @@ class App(tk.Tk):
         self._save_simple_plot(fig, folder / "loss_curve.png")
 
         # 2. Attenuation graph
-        names = sorted({str(o.get("material", "vzduch")).lower() for o in objekty if isinstance(o, dict)}) or ["vzduch"]
+        names = sorted({str(o.get("material", "air")).lower() for o in objects if isinstance(o, dict)}) or ["air"]
         att = []
         for m in names:
             props = materials.get(m, {}) if isinstance(materials, dict) else {}
@@ -3498,8 +3496,8 @@ class App(tk.Tk):
         fig = plt.figure(figsize=(8, 4.4))
         ax = fig.add_subplot(111)
         ax.bar(names, att)
-        ax.set_title("Materiál Attenuation Graph")
-        ax.set_xlabel("Materiál")
+        ax.set_title("Material Attenuation Graph")
+        ax.set_xlabel("Material")
         ax.set_ylabel("Absorption coefficient")
         ax.tick_params(axis="x", rotation=25)
         ax.grid(True, axis="y", alpha=0.3)
@@ -3508,8 +3506,8 @@ class App(tk.Tk):
         # 3. Energy graph
         total_energy = float(np.mean(np.abs(true))) + 1e-9
         err_energy = float(np.mean(np.abs(err)))
-        reflected = min(100.0, sum(float((materials.get(str(o.get("material", "vzduch")).lower(), {}) or {}).get("R", 0.1)) for o in objekty) * 100 / max(1, len(objekty)))
-        absorbed = min(100.0, sum(float((materials.get(str(o.get("material", "vzduch")).lower(), {}) or {}).get("absorption", 0.05)) for o in objekty) * 15 / max(1, len(objekty)))
+        reflected = min(100.0, sum(float((materials.get(str(o.get("material", "air")).lower(), {}) or {}).get("R", 0.1)) for o in objects) * 100 / max(1, len(objects)))
+        absorbed = min(100.0, sum(float((materials.get(str(o.get("material", "air")).lower(), {}) or {}).get("absorption", 0.05)) for o in objects) * 15 / max(1, len(objects)))
         predicted = max(0.0, 100.0 - reflected*0.35 - absorbed*0.45 - min(30, err_energy/(total_energy+1e-9)*100))
         labels = ["Predicted field", "Reflected", "Absorbed", "Model error"]
         vals = [predicted, reflected*0.35, absorbed*0.45, min(30.0, err_energy/(total_energy+1e-9)*100)]
@@ -3532,14 +3530,14 @@ class App(tk.Tk):
         ax.bar(names, refl)
         ax.set_ylim(0, 1.05)
         ax.set_title("Reflection Coefficient Diagram")
-        ax.set_xlabel("Materiál")
+        ax.set_xlabel("Material")
         ax.set_ylabel("R coefficient")
         ax.tick_params(axis="x", rotation=25)
         ax.grid(True, axis="y", alpha=0.3)
         self._save_simple_plot(fig, folder / "reflection_coefficients.png")
 
         # Removed: Confidence Heatmap, Diffraction Zones, and 3D Surface Wave graphs.
-        # Удалено: Confidence Heatmap, Diffraction Zones и 3D Surface Wave.
+        # Implementation note.
         for old_graph in ("confidence_heatmap.png", "diffraction_zones.png", "surface_wave_3d.png"):
             try:
                 (folder / old_graph).unlink()
@@ -3579,7 +3577,7 @@ class App(tk.Tk):
         except Exception:
             pass
 
-        # Uložiť compact JSON summary
+        # Save compact JSON summary
         summary = {
             "generated_visuals": [
                 "loss_curve.png",
@@ -3591,14 +3589,14 @@ class App(tk.Tk):
             "frequency_ghz": freq,
             "epochs": epochs,
             "materials": names,
-            "objekty": len(objekty),
+            "objects": len(objects),
         }
         (folder / "ai_visuals_summary.json").write_text(json.dumps(summary, indent=2, ensure_ascii=False), encoding="utf-8")
 
         self._render_ai_visuals_gallery(folder)
         self._log(f"[AI Visuals] Saved graphs to: {folder}\n")
         if not silent:
-            messagebox.showinfo("AI Graphs", f"Все графики сохранены в папку генерации:\n{folder}")
+            messagebox.showinfo("AI Graphs", f"\n{folder}")
 
     def _render_ai_visuals_gallery(self, folder: Path):
         """Show generated graph images in the AI Graphs tab."""
@@ -3633,7 +3631,7 @@ class App(tk.Tk):
                 tk_im = ImageTk.PhotoImage(im)
                 self._graph_img_refs[fname] = tk_im
                 ttk.Label(card, image=tk_im).pack(padx=8, pady=8)
-                ttk.Button(card, text="Otvoriť", command=lambda p=path: open_path_default(p)).pack(pady=(0, 8))
+                ttk.Button(card, text="Open", command=lambda p=path: open_path_default(p)).pack(pady=(0, 8))
             except Exception as e:
                 ttk.Label(card, text=f"Cannot load {fname}: {e}").pack(padx=10, pady=10)
         try:
@@ -3643,7 +3641,7 @@ class App(tk.Tk):
             pass
 
     def save_ai_report_to_generation_folder(self):
-        """Uložiť current AI report text into current generation/results folder."""
+        """Save current AI report text into current generation/results folder."""
         report = self.analysis_text.get("1.0", "end").strip() if hasattr(self, "analysis_text") else ""
         if not report:
             self.analyze_selected_file()
@@ -3655,7 +3653,7 @@ class App(tk.Tk):
             folder = path.parent if path else None
 
         if not folder:
-            messagebox.showinfo("AI Analysis", "Нет папки генерации для сохранения отчёта.")
+            messagebox.showinfo("AI Analysis", "Run the solver first or select a generation folder before saving the report.")
             return
 
         try:
@@ -3677,21 +3675,21 @@ class App(tk.Tk):
 
     def _material_effect_text(self, material: str) -> str:
         """Human-readable material interpretation."""
-        m = (material or "vzduch").strip().lower()
+        m = (material or "air").strip().lower()
         table = {
-            "kov":    ("Strong reflection", "High shadow zones", "Very low transmission"),
-            "betón": ("Strong absorption", "Wave distortion", "Barrier-like attenuation"),
-            "sklo":    ("Partial transmission", "Weak reflection", "Smooth boundary effects"),
-            "voda":    ("Increased attenuation", "Phase shift", "Medium transmission"),
-            "plast":  ("Weak interaction", "Mostly transparent", "Low reflection"),
-            "drevo":     ("Medium absorption", "Diffuse scattering", "Moderate transmission"),
-            "tehla":    ("Strong attenuation", "Reflection from rough boundary", "Shadow formation"),
-            "guma":   ("High absorption", "Weak reflection", "Signal damping"),
-            "piesok":     ("Scattering", "Energy loss", "Diffuse attenuation"),
-            "pena":     ("Very strong damping", "Low reflection", "Soft absorption"),
-            "ľad":      ("High transmission", "Low absorption", "Small phase changes"),
-            "asfalt":  ("Absorption", "Rough-surface scattering", "Medium reflection"),
-            "vzduch":      ("Reference medium", "Free propagation", "Almost no absorption"),
+            "metal":    ("Strong reflection", "High shadow zones", "Very low transmission"),
+            "concrete": ("Strong absorption", "Wave distortion", "Barrier-like attenuation"),
+            "glass":    ("Partial transmission", "Weak reflection", "Smooth boundary effects"),
+            "water":    ("Increased attenuation", "Phase shift", "Medium transmission"),
+            "plastic":  ("Weak interaction", "Mostly transparent", "Low reflection"),
+            "wood":     ("Medium absorption", "Diffuse scattering", "Moderate transmission"),
+            "brick":    ("Strong attenuation", "Reflection from rough boundary", "Shadow formation"),
+            "rubber":   ("High absorption", "Weak reflection", "Signal damping"),
+            "sand":     ("Scattering", "Energy loss", "Diffuse attenuation"),
+            "foam":     ("Very strong damping", "Low reflection", "Soft absorption"),
+            "ice":      ("High transmission", "Low absorption", "Small phase changes"),
+            "asphalt":  ("Absorption", "Rough-surface scattering", "Medium reflection"),
+            "air":      ("Reference medium", "Free propagation", "Almost no absorption"),
         }
         effects = table.get(m, ("Custom material", "Model-dependent behavior", "Analyze via error map"))
         return f"{m.title():<12} -> {effects[0]}; {effects[1]}; {effects[2]}"
@@ -3707,11 +3705,11 @@ class App(tk.Tk):
         except Exception:
             epochs = 0
 
-        objekty = list(getattr(self, "objekty", []) or [])
-        materials = sorted({str(o.get("material", "vzduch")).lower() for o in objekty if isinstance(o, dict)}) or ["vzduch"]
-        shapes = sorted({str(o.get("shape", "circle")).lower() for o in objekty if isinstance(o, dict)}) or ["circle"]
+        objects = list(getattr(self, "objects", []) or [])
+        materials = sorted({str(o.get("material", "air")).lower() for o in objects if isinstance(o, dict)}) or ["air"]
+        shapes = sorted({str(o.get("shape", "circle")).lower() for o in objects if isinstance(o, dict)}) or ["circle"]
 
-        n_obj = len(objekty)
+        n_obj = len(objects)
         n_mat = len(materials)
         complexity_score = min(100.0, 18*n_obj + 9*n_mat + 6*len(shapes) + (freq/10.0)*12)
         difficulty = "LOW" if complexity_score < 35 else "MEDIUM" if complexity_score < 70 else "HIGH"
@@ -3735,8 +3733,8 @@ class App(tk.Tk):
 Model Type: Physics-Informed Neural Network / neural field approximation
 Frekvencia: {freq:.3f} GHz
 Epochs: {epochs}
-Objekty: {n_obj}
-Materiály: {", ".join(m.title() for m in materials)}
+Objects: {n_obj}
+Materials: {", ".join(m.title() for m in materials)}
 Shapes: {", ".join(s.title() for s in shapes)}
 
 Simulation analyzes:
@@ -3757,13 +3755,13 @@ Geometry impact:
 
 🧬 3. NEURAL NETWORK INSIGHTS
 ─────────────────────────────
-The model learns electromagnetic propagation through a multi-material scéna.
+The model learns electromagnetic propagation through a multi-material scene.
 It receives spatial coordinates and approximates the wave field behavior.
 The Pred / True / Error comparison shows how close the learned field is to
 the expected physical wave distribution.
 
 Key learned behaviors:
-  ✓ Boundary interaction around objekty
+  ✓ Boundary interaction around objects
   ✓ Signal attenuation inside absorbing materials
   ✓ Reflection from high-R materials
   ✓ Shadow zones behind barriers
@@ -3782,15 +3780,15 @@ Heuristic AI confidence:
 ───────────────────────
 ✓ Wave continuity preserved approximately
 ✓ Reflection behavior detected
-✓ Materiál attenuation detected
+✓ Material attenuation detected
 ✓ Stable propagation field
 ✓ Numerical convergence looks consistent
-✓ Multi-objekt interaction is represented visually
+✓ Multi-object interaction is represented visually
 
 🏗️ 6. SCENE COMPLEXITY SCORE
 ────────────────────────────
-Objekty: {n_obj}
-Materiály: {n_mat}
+Objects: {n_obj}
+Materials: {n_mat}
 Shape types: {len(shapes)}
 Complexity Score: {complexity_score:.1f} / 100
 Estimated Difficulty: {difficulty}
@@ -3803,16 +3801,16 @@ Complexity meter:
 - Increase epochs for smoother field prediction.
 - Lower frequencies usually improve penetration through obstacles.
 - Metal creates the strongest reflections and shadow zones.
-- Concrete and tehla increase absorption and distortion.
+- Concrete and brick increase absorption and distortion.
 - Complex scenes require more training steps and denser sampling.
 - Compare field_pred.png, field_true.png and field_err.png after every run.
 
 🌊 8. HUMAN-LIKE SIMULATION EXPLANATION
 ───────────────────────────────────────
-The electromagnetic wave propagates from the zdroj and interacts with
-surrounding materials. Reflective objekty push energy back into the scéna,
-absorbing objekty reduce the signal, and transparent materials allow part of
-the wave to pass through. Sharp corners and trojuholník/obdĺžnik boundaries
+The electromagnetic wave propagates from the source and interacts with
+surrounding materials. Reflective objects push energy back into the scene,
+absorbing objects reduce the signal, and transparent materials allow part of
+the wave to pass through. Sharp corners and triangle/rectangle boundaries
 create diffraction zones, while dense materials generate low-intensity regions
 behind them.
 
@@ -3828,7 +3826,7 @@ Report File: {path.name}
 🔥 10. RESEARCH SOFTWARE IMPRESSION
 ───────────────────────────────────
 This interface now behaves like a mini AI scientific platform:
-  • mini COMSOL-style scéna editor
+  • mini COMSOL-style scene editor
   • neural-network field analysis
   • material physics explanation
   • visual prediction/error diagnostics
@@ -3918,7 +3916,7 @@ Generated AI visual analytics:
         self.analysis_text.insert("end", report)
 
         # Automatically save AI report into the current generation/results folder.
-        # Автоматически сохраняем AI report в папку текущей генерации/результата.
+        # Implementation note.
         try:
             report_folder = Path(self.last_results_dir) if self.last_results_dir else path.parent
             txt_path, md_path = self._write_ai_report_files(report_folder, report)
@@ -3929,7 +3927,7 @@ Generated AI visual analytics:
 
     # ----------------------------
     # Saved generations library
-    # Библиотека сохранённых генераций
+    # Implementation note.
     # ----------------------------
     def _generation_meta_path(self, folder: Path) -> Path:
         return folder / "generation_info.json"
@@ -3974,7 +3972,7 @@ Generated AI visual analytics:
         hint.pack(fill="x")
         tk.Label(
             hint,
-            text="1. Click a saved generation in the list\n2. Then press Otvoriť folder / Otvoriť image / Otvoriť video",
+            text="1. Click a saved generation in the list\n2. Then press Open folder / Open image / Open video",
             bg="#111827",
             fg="#f8fafc",
             font=("Consolas", 10),
@@ -4028,7 +4026,7 @@ Generated AI visual analytics:
             i += 1
 
     def _update_save_generation_button(self):
-        """Enable Uložiť generation only when the user typed a file name."""
+        """Enable Save generation only when the user typed a file name."""
         name = self._safe_folder_name(self.gen_title_var.get())
         if self.btn_save_generation is not None:
             self.btn_save_generation.configure(state=("normal" if name else "disabled"))
@@ -4036,7 +4034,7 @@ Generated AI visual analytics:
     def save_current_generation(self):
         """Copy the current result folder into saved_generations with title and description."""
         if not self.last_results_dir or not Path(self.last_results_dir).exists():
-            messagebox.showinfo("No result", "Сначала запустите solver, чтобы был результат для сохранения.")
+            messagebox.showinfo("No result", "Run the solver first to create a result folder.")
             return
         title = self._safe_folder_name(self.gen_title_var.get())
         if not title:
@@ -4068,7 +4066,7 @@ Generated AI visual analytics:
             "source_results": str(Path(self.last_results_dir).resolve()),
             "frequency_ghz": self.freq_ghz_var.get(),
             "epochs": self.epochs_var.get(),
-            "objects_count": len(self.objekty),
+            "objects_count": len(self.objects),
         }
         with open(self._generation_meta_path(target), "w", encoding="utf-8") as f:
             json.dump(meta, f, ensure_ascii=False, indent=2)
@@ -4117,7 +4115,7 @@ Generated AI visual analytics:
         tk.Label(info, text=folder.name, bg="#111827", fg="#f8fafc", font=("Consolas", 10)).grid(row=0, column=1, sticky="w", padx=(16, 0), pady=(0, 8))
 
         tk.Label(info, text="🧠 Includes", bg="#111827", fg="#93c5fd", font=("Segoe UI", 10, "bold")).grid(row=1, column=0, sticky="w", pady=(0, 8))
-        tk.Label(info, text="AI report, graphs, field images, scéna snapshot", bg="#111827", fg="#f8fafc", font=("Segoe UI", 10)).grid(row=1, column=1, sticky="w", padx=(16, 0), pady=(0, 8))
+        tk.Label(info, text="AI report, graphs, field images, scene snapshot", bg="#111827", fg="#f8fafc", font=("Segoe UI", 10)).grid(row=1, column=1, sticky="w", padx=(16, 0), pady=(0, 8))
 
         tk.Label(info, text="📍 Folder", bg="#111827", fg="#93c5fd", font=("Segoe UI", 10, "bold")).grid(row=2, column=0, sticky="nw")
         path_lbl = tk.Label(
@@ -4138,11 +4136,11 @@ Generated AI visual analytics:
             try:
                 open_folder_default(folder)
             except Exception as e:
-                messagebox.showwarning("Nie je možné otvoriť folder", str(e), parent=win)
+                messagebox.showwarning("Cannot open folder", str(e), parent=win)
 
         open_btn = tk.Button(
             btns,
-            text="Otvoriť folder",
+            text="Open folder",
             command=open_saved_folder,
             bg="#2563eb",
             fg="white",
@@ -4211,7 +4209,7 @@ Generated AI visual analytics:
             f"Saved at: {meta.get('saved_at', '-')}",
             f"Frekvencia GHz: {meta.get('frequency_ghz', '-')}",
             f"Epochs: {meta.get('epochs', '-')}",
-            f"Objekty: {meta.get('objects_count', '-')}",
+            f"Objects: {meta.get('objects_count', '-')}",
             "",
             "Description:",
             meta.get("description", ""),
@@ -4224,7 +4222,7 @@ Generated AI visual analytics:
         self.gen_view.insert("end", "\n".join(lines))
 
         # Show three pictures in one row.
-        # Показываем три картинки в один ряд.
+        # Implementation note.
         if getattr(self, "gen_preview_labels", None):
             preview_map = {
                 "Pred": "field_pred.png",
@@ -4273,7 +4271,7 @@ Generated AI visual analytics:
             if p.exists():
                 open_path_default(p)
                 return
-        messagebox.showinfo("No image", "В этой генерации не найдены field_pred.png / field_true.png / field_err.png.")
+        messagebox.showinfo("No image", "No field_pred.png / field_true.png / field_err.png file was found.")
 
     def open_selected_generation_video(self):
         folder = self._selected_generation_folder()
@@ -4284,16 +4282,15 @@ Generated AI visual analytics:
             if p.exists():
                 open_path_default(p)
                 return
-        messagebox.showinfo("No video", "В этой генерации ещё нет видео. Запустите solver новой версией и сохраните генерацию заново.")
+        messagebox.showinfo("No video", "Run the solver first to create a video output.")
 
     # ----------------------------
     # Misc
-    # Разное
+    # Implementation note.
     # ----------------------------
     def _log(self, s: str):
         """
-        Append text to log widget.
-        Добавить текст в окно лога.
+        Append text to the log widget.
         """
         self.log.insert("end", s)
         self.log.see("end")
@@ -4305,7 +4302,7 @@ Generated AI visual analytics:
     def restart_app(self):
         """
         Restart application (execv re-launches the current python process).
-        Перезапуск приложения (execv запускает заново текущий python-процесс).
+        The current interpreter is re-executed with the same command-line arguments.
         """
         try:
             python = sys.executable
@@ -4315,6 +4312,6 @@ Generated AI visual analytics:
 
 
 # Script entry point
-# Точка входа
+# Implementation note.
 if __name__ == "__main__":
     App().mainloop()
