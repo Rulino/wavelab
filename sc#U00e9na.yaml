@@ -1,0 +1,114 @@
+materials:
+  vzduch:
+    absorption: 0.05
+    R: 0.0
+    T: 1.0
+    scatter: 0.0
+  kov:
+    absorption: 5.0
+    R: 0.9
+    T: 0.1
+    scatter: 1.0
+  plast:
+    absorption: 0.35
+    R: 0.1
+    T: 0.9
+    scatter: 0.18
+  sklo:
+    absorption: 0.6
+    R: 0.15
+    T: 0.85
+    scatter: 0.25
+  betón:
+    absorption: 2.5
+    R: 0.6
+    T: 0.4
+    scatter: 0.55
+  voda:
+    absorption: 0.5
+    R: 0.1
+    T: 0.9
+    scatter: 0.25
+  drevo:
+    absorption: 1.0
+    R: 0.3
+    T: 0.7
+    scatter: 0.35
+  guma:
+    absorption: 3.0
+    R: 0.25
+    T: 0.75
+    scatter: 0.2
+  ľad:
+    absorption: 0.2
+    R: 0.08
+    T: 0.92
+    scatter: 0.12
+  piesok:
+    absorption: 1.8
+    R: 0.35
+    T: 0.65
+    scatter: 0.45
+  tehla:
+    absorption: 2.2
+    R: 0.55
+    T: 0.45
+    scatter: 0.5
+  asfalt:
+    absorption: 3.2
+    R: 0.5
+    T: 0.5
+    scatter: 0.4
+  pena:
+    absorption: 4.5
+    R: 0.1
+    T: 0.9
+    scatter: 0.08
+scéna:
+  zdroj:
+    x0: 0.65
+    y0: 1.4500000000000002
+    amplitude: 2.385
+    frequency_hz: 1000000000.0
+    radius: 0.142
+  objekty:
+  - x: 0.7
+    y: 0.6
+    material: betón
+    shape: circle
+    r: 0.1
+    width: 0.2
+    height: 0.2
+    angle: 0.0
+  - x: 1.2
+    y: 1.3
+    material: kov
+    shape: rectangle
+    r: 0.08
+    width: 0.22
+    height: 0.14
+    angle: 0.0
+  - x: 1.8
+    y: 0.9
+    material: sklo
+    shape: triangle
+    r: 0.08
+    width: 0.22
+    height: 0.2
+    angle: 0.0
+  - x: 2.3
+    y: 1.6
+    material: plast
+    shape: rectangle
+    r: 0.075
+    width: 0.18
+    height: 0.16
+    angle: 30.0
+  - x: 2.7
+    y: 0.4
+    material: voda
+    shape: circle
+    r: 0.09
+    width: 0.18
+    height: 0.18
+    angle: 0.0
