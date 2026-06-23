@@ -1,0 +1,25 @@
+cff-version: 1.2.0
+title: "WaveLab Studio: a research software tool for 2D wave-propagation experiments in heterogeneous scenes"
+message: "If you use this software, please cite the associated article and archived software release."
+type: software
+authors:
+  - family-names: Yurlova
+    given-names: Kristina
+  - family-names: Ružička
+    given-names: Marek
+    orcid: ""
+repository-code: "https://github.com/PLEASE-UPDATE/wavelab-studio"
+url: "https://github.com/PLEASE-UPDATE/wavelab-studio"
+license: "MIT"
+version: "0.1.0"
+date-released: "2026-XX-XX"
+abstract: >
+  WaveLab Studio is a Python-based research software prototype for creating,
+  running, and visualising two-dimensional wave-propagation scenarios in
+  heterogeneous scenes with multiple material objects.
+keywords:
+  - wave propagation
+  - electromagnetic simulation
+  - physics-informed neural networks
+  - scientific visualization
+  - Python

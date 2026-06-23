@@ -1,0 +1,27 @@
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+.venv/
+venv/
+.env
+.ipynb_checkpoints/
+.pytest_cache/
+
+# Generated solver/application outputs
+results/
+outputs/
+generations/
+saved_generations/
+
+# Heavy/generated arrays and videos
+*.npy
+*.npz
+*.gif
+*.mp4
+
+# Generated PNGs are ignored by default, except curated documentation figures
+*.png
+!docs/figures/*.png
+
+.DS_Store

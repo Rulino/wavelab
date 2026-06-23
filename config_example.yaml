@@ -1,0 +1,16 @@
+
+# Implementation note.
+# Implementation note.
+
+custom:
+  scene_path: "examples/basic_scene.yaml"
+
+batch_size:
+  Interior: 4096
+
+training:
+  max_steps: 20000
+
+optimizer:
+  _target_: torch.optim.Adam
+  lr: 1.0e-4
